@@ -431,6 +431,7 @@ html{scrollbar-color:#4A3A2C var(--bg)}
         <label class="fld" style="width:120px">Pesée du jour (kg)
           <input id="bw-input" type="number" inputmode="decimal" step="0.1" min="30" max="200" placeholder="ex: 79.2" style="height:36px"></label>
         <button class="btn go sm" id="bw-add" style="height:36px">Enregistrer</button>
+        <button class="btn ghost sm" id="bw-edit" style="height:36px" title="Modifier ou supprimer des pesées">✎ Historique</button>
       </div>
     </div>
     <div class="dim" style="font-size:12px;margin:8px 0 10px">Cible lean bulk : <b>+0,2 kg/semaine</b> (moyenne hebdo). Sert aussi de charge de référence pour les exercices au poids de corps.</div>
@@ -1126,6 +1127,61 @@ function renderBody(){
       <span class="wchip">${log.length} pesée${log.length>1?'s':''}</span>
     </div>
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;max-width:420px;height:46px;display:block" aria-label="Tendance du poids de corps">${line}${dot}</svg>`;
+}
+
+/* ====== POIDS DE CORPS — historique éditable (corriger / supprimer / rattraper une pesée) ====== */
+/* Travail sur un brouillon : rien n'est appliqué tant que « Enregistrer » n'est pas cliqué. */
+let _bodyDraft=null;
+function openBodyModal(){
+  _bodyDraft=JSON.parse(JSON.stringify(S.bodyLog||[]));
+  const m=document.getElementById('modal');
+  m.innerHTML=`<h2 style="font-size:15px">Historique des pesées</h2>
+    <p class="muted" style="font-size:13px;line-height:1.55">Corrige une valeur ou une date, supprime une pesée erronée, ou rattrape une pesée oubliée.
+      <span class="dim">Rien n'est enregistré tant que tu n'as pas cliqué « Enregistrer » — « Annuler » remet tout comme avant.</span></p>
+    <div id="bl-rows" style="display:grid;gap:8px;max-height:44vh;overflow:auto;margin:12px 0;padding-right:4px"></div>
+    <button class="btn ghost sm" id="bl-add">+ Ajouter une pesée</button>
+    <div class="row" style="margin-top:16px;justify-content:flex-end">
+      <button class="btn ghost sm" id="bl-cancel">Annuler</button>
+      <button class="btn go sm" id="bl-save">Enregistrer</button>
+    </div>`;
+  document.getElementById('modal-bg').classList.add('show');
+  document.getElementById('bl-cancel').onclick=closeModal;
+  document.getElementById('bl-add').onclick=bodyAddRow;
+  document.getElementById('bl-save').onclick=bodySaveDraft;
+  renderBodyRows();
+}
+function renderBodyRows(){
+  const c=document.getElementById('bl-rows');if(!c)return;
+  if(!_bodyDraft.length){c.innerHTML='<span class="dim">Aucune pesée. Utilise « + Ajouter une pesée ».</span>';return;}
+  // affichage du plus récent au plus ancien, en conservant l'index réel du brouillon
+  const order=_bodyDraft.map((e,i)=>i).sort((a,b)=>_bodyDraft[a].date<_bodyDraft[b].date?1:-1);
+  c.innerHTML=order.map(i=>`<div class="row" style="gap:8px;align-items:center;flex-wrap:nowrap">
+      <input type="date" value="${esc(_bodyDraft[i].date)}" style="flex:1;min-width:0;height:36px" oninput="bodySetRow(${i},'date',this.value)">
+      <input type="number" inputmode="decimal" step="0.1" min="30" max="200" value="${_bodyDraft[i].kg}" style="width:88px;height:36px;text-align:center" oninput="bodySetRow(${i},'kg',this.value)">
+      <span class="dim" style="font-size:12px">kg</span>
+      <button class="icobtn del" title="Supprimer cette pesée" onclick="bodyDelRow(${i})">✕</button>
+    </div>`).join('');
+}
+function bodySetRow(i,k,v){
+  if(!_bodyDraft||!_bodyDraft[i])return;
+  _bodyDraft[i][k]=(k==='kg')?parseFloat(String(v).replace(',','.')):v;
+}
+function bodyAddRow(){
+  _bodyDraft.push({date:new Date().toISOString().slice(0,10),kg:currentBodyweight()});
+  renderBodyRows();
+}
+function bodyDelRow(i){ _bodyDraft.splice(i,1); renderBodyRows(); }
+function bodySaveDraft(){
+  const clean=[];
+  for(const e of _bodyDraft){
+    if(!e.date){toast('Une pesée n\'a pas de date.');return;}
+    if(!isFinite(e.kg)||e.kg<30||e.kg>200){toast('Poids invalide (30–200 kg) au '+fmtDateShort(e.date)+'.');return;}
+    clean.push({date:e.date,kg:Math.round(e.kg*10)/10});
+  }
+  // une seule pesée par date : la dernière saisie l'emporte
+  const byDate={};clean.forEach(e=>{byDate[e.date]=e;});
+  S.bodyLog=Object.keys(byDate).sort().map(d=>byDate[d]);
+  save();closeModal();render();toast('Pesées mises à jour.');
 }
 
 /* ====== RADAR 9 ZONES ====== */
@@ -2055,8 +2111,9 @@ function sfx(kind){
 const sndBtn=document.getElementById('snd');
 function syncSnd(){sndBtn.textContent=S.soundOn===false?'🔇':'🔊';}
 sndBtn.onclick=()=>{S.soundOn=S.soundOn===false;save();syncSnd();if(S.soundOn!==false)sfx('tick');};
-{const b=document.getElementById('bw-add'),i=document.getElementById('bw-input');
+{const b=document.getElementById('bw-add'),i=document.getElementById('bw-input'),ed=document.getElementById('bw-edit');
  if(b)b.onclick=addBodyweight;
+ if(ed)ed.onclick=openBodyModal;
  if(i)i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addBodyweight();}});}
 {const pn=document.getElementById('prog-new');if(pn)pn.onclick=newCycle;}
 
