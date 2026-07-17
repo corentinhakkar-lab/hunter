@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SYSTÈME — Entraînement</title>
-<!-- v2.2 : thème allégé (sans backdrop-filter, halos cuits dans le fond, particules réduites) — v2.1 : suivi poids de corps, exos au poids de corps, suggestion double progression, petits multiples, icône iPhone/PWA, nouveau cycle -->
+<!-- v2.4 : alarme via élément <audio> (sonne malgré le bouton silence iPhone) + historique des pesées éditable — v2.2 : thème allégé — v2.1 : poids de corps, suggestion progression, petits multiples, icône iPhone/PWA -->
 <meta name="theme-color" content="#171310">
 <!-- Icône & mode application (raccourci iPhone / PWA) -->
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -751,6 +751,8 @@ html{scrollbar-color:#4A3A2C var(--bg)}
   <div><div class="rl">REPOS</div><div class="rt" id="rest-t">0:00</div></div>
   <button class="btn ghost sm" id="rest-stop">✕</button>
 </div>
+<!-- Alarme via un élément média : contrairement à Web Audio, il sonne même si l'iPhone est en mode silencieux -->
+<audio id="alarm-audio" loop playsinline preload="auto"></audio>
 <div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"><div class="th">NOTIFICATION SYSTÈME</div><div class="tb" id="toast-body"></div></div>
 <div class="lvlup" id="lvlup">
@@ -1719,6 +1721,7 @@ let restIv=null,restEnd=0;
 function startRest(sec){
   /* basé sur l'horloge réelle : reste juste même si le téléphone se verrouille ou que l'onglet est throttlé */
   restEnd=Date.now()+sec*1000;
+  unlockAudio();   // appelé depuis le ✓ = geste utilisateur : autorise le son avant que l'alarme en ait besoin
   const box=document.getElementById('rest');box.classList.add('show');
   updRest();
   if(restIv)clearInterval(restIv);
@@ -1754,17 +1757,33 @@ function showRestAlarm(){
     document.getElementById('restover-btn').onclick=dismissRestAlarm;
   }
   ov.classList.add('show');
+  vibrateAlarm();
+  if(S.soundOn===false)return;
+  // 1er choix : l'élément <audio> en boucle (sonne même iPhone en silencieux, jusqu'à l'appui sur le bouton)
+  let started=false;
+  if(alarmEl&&alarmEl.src){
+    try{
+      alarmEl.muted=false;alarmEl.currentTime=0;
+      const p=alarmEl.play();
+      started=true;
+      if(p&&p.catch)p.catch(()=>{beepFallback();});   // refusé par le navigateur → bips Web Audio
+    }catch(e){started=false;}
+  }
+  if(!started)beepFallback();
+}
+function vibrateAlarm(){ if(navigator.vibrate){try{navigator.vibrate([300,150,300]);}catch(e){}} }
+/* Repli : bips Web Audio répétés (muets si l'iPhone est en silencieux — d'où l'élément <audio> ci-dessus) */
+function beepFallback(){
   sfx('alarm');restAlarmN=1;
   if(restAlarmIv)clearInterval(restAlarmIv);
   restAlarmIv=setInterval(()=>{
-    sfx('alarm');restAlarmN++;
-    if(navigator.vibrate){try{navigator.vibrate([300,150,300]);}catch(e){}}
+    sfx('alarm');restAlarmN++;vibrateAlarm();
     if(restAlarmN>=10){clearInterval(restAlarmIv);restAlarmIv=null;}
   },1600);
-  if(navigator.vibrate){try{navigator.vibrate([300,150,300]);}catch(e){}}
 }
 function dismissRestAlarm(){
   if(restAlarmIv){clearInterval(restAlarmIv);restAlarmIv=null;}
+  if(alarmEl){try{alarmEl.pause();alarmEl.currentTime=0;}catch(e){}}
   if(navigator.vibrate){try{navigator.vibrate(0);}catch(e){}}
   const ov=document.getElementById('restover');if(ov)ov.classList.remove('show');
   sfx('click');
@@ -2085,6 +2104,52 @@ function toast(msg){
 }
 let _ac=null;
 function ac(){if(!_ac){try{_ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return _ac;}
+
+/* ====== ALARME DE REPOS — élément <audio> ======
+   Web Audio (oscillateurs) est coupé par l'interrupteur silencieux de l'iPhone.
+   Un élément <audio> passe par le canal média : il sonne même en mode silencieux,
+   et boucle jusqu'à ce qu'on le coupe. Le son est fabriqué ici (aucun fichier à charger). */
+function buildAlarmWav(){
+  const sr=22050,dur=1.4,n=Math.floor(sr*dur);
+  const s=new Int16Array(n);
+  const tones=[[0,.14,988],[.20,.34,988],[.40,.72,1318]]; // bip · bip · bip long, puis silence
+  for(const t of tones){
+    const a=Math.floor(t[0]*sr),b=Math.floor(t[1]*sr),len=(b-a)/sr;
+    for(let i=a;i<b;i++){
+      const x=(i-a)/sr;
+      const env=Math.max(0,Math.min(1,x/.005,(len-x)/.005)); // fondu 5 ms : évite les clics
+      s[i]=Math.round(Math.sin(2*Math.PI*t[2]*x)*env*.55*32767);
+    }
+  }
+  const buf=new ArrayBuffer(44+n*2),v=new DataView(buf);
+  const w=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i));};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+  w(36,'data');v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++)v.setInt16(44+i*2,s[i],true);
+  return URL.createObjectURL(new Blob([buf],{type:'audio/wav'}));
+}
+const alarmEl=document.getElementById('alarm-audio');
+try{ if(alarmEl)alarmEl.src=buildAlarmWav(); }catch(e){}
+/* iOS n'autorise le son qu'après un geste de l'utilisateur : on « amorce » l'élément
+   au premier appui, et de nouveau au lancement d'un repos (déclenché par le ✓). */
+let _audioUnlocked=false;
+function unlockAudio(){
+  try{const c=ac();if(c&&c.state==='suspended')c.resume();}catch(e){}
+  if(_audioUnlocked||!alarmEl||!alarmEl.src)return;
+  try{
+    alarmEl.muted=true;
+    const p=alarmEl.play();
+    if(p&&p.then)p.then(()=>{alarmEl.pause();alarmEl.currentTime=0;alarmEl.muted=false;_audioUnlocked=true;})
+                 .catch(()=>{alarmEl.muted=false;});
+    else{alarmEl.pause();alarmEl.currentTime=0;alarmEl.muted=false;_audioUnlocked=true;}
+  }catch(e){}
+}
+document.addEventListener('pointerdown',unlockAudio,{passive:true});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){try{const c=ac();if(c&&c.state==='suspended')c.resume();}catch(e){}}
+});
 function beep(freq,dur,delay,type,vol){
   const c=ac();if(!c)return;
   const o=c.createOscillator(),g=c.createGain();
