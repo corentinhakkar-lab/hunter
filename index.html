@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SYSTÈME — Entraînement</title>
-<!-- v2.4 : alarme via élément <audio> (sonne malgré le bouton silence iPhone) + historique des pesées éditable — v2.2 : thème allégé — v2.1 : poids de corps, suggestion progression, petits multiples, icône iPhone/PWA -->
+<!-- v3.0 : programme 100 % salle — Haut/Bas ×2, 4 séances de 60' (migration progVersion 3, archives conservées) — v2.4 : alarme <audio> + historique pesées — v2.2 : thème allégé — v2.1 : poids de corps, suggestion progression, icône iPhone/PWA -->
 <meta name="theme-color" content="#171310">
 <!-- Icône & mode application (raccourci iPhone / PWA) -->
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -454,7 +454,7 @@ html{scrollbar-color:#4A3A2C var(--bg)}
 <section class="screen" id="screen-sessions">
   <div class="panel" style="margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
     <div><h3 style="margin:0">Grimoire des séances</h3>
-      <span class="dim" style="font-size:12.5px">Hypertrophie · 4 séances de 45' / semaine · ordre libre — entièrement modifiable</span></div>
+      <span class="dim" style="font-size:12.5px">Hypertrophie · 4 séances de 60' en salle · Haut/Bas ×2 — entièrement modifiable</span></div>
     <div style="margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <button class="btn sm go" onclick="openSessionModal(null)">+ Nouvelle séance</button>
     </div>
@@ -496,8 +496,8 @@ html{scrollbar-color:#4A3A2C var(--bg)}
   <div class="panel" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h3 style="margin:0">20 niveaux / 6 rangs</h3>
       <button class="btn ghost sm" style="margin-left:auto" id="p-edit">✎ Éditer les récompenses</button></div>
-    <div class="dim" style="font-size:12px;margin:10px 0">Calibrage : une séance ≈ 12-16 séries ≈ 170-210 XP → 4 séances/semaine ≈ 700-840 XP.
-      Rang D vers les semaines 2-3 · rang C vers les semaines 7-8 · rang S après ≈ 12 mois de constance.</div>
+    <div class="dim" style="font-size:12px;margin:10px 0">Calibrage : une séance ≈ 17-20 séries ≈ 220-250 XP → 4 séances/semaine ≈ 900-1 000 XP.
+      Avec le programme salle, tu montes un peu plus vite qu'avant : rang C vers les semaines 5-6 · rang B vers le 3<sup>e</sup> mois · rang S après ≈ 10 mois de constance.</div>
     <table><thead><tr><th>Niv.</th><th>Rang</th><th>XP requis (≥)</th><th>≈ Échéance</th><th>Récompense</th></tr></thead>
     <tbody id="p-table"></tbody></table>
   </div>
@@ -539,22 +539,23 @@ html{scrollbar-color:#4A3A2C var(--bg)}
     <b>Niveau & rang du joueur :</b> calculés sur l'XP totale des raids archivés. Abandonner un raid ne rapporte rien.<br>
     <b>Échauffement :</b> checklist au début de chaque raid (0 XP) — cardio léger, mobilité, puis séries d'approche progressives sur le premier exercice lourd. Les séries d'approche ne se saisissent pas comme séries de travail.</p>
   </div>
-  <div class="panel" style="margin-bottom:16px"><h3>Principes du programme (PDF coach)</h3>
+  <div class="panel" style="margin-bottom:16px"><h3>Principes du programme</h3>
     <p class="muted" style="line-height:1.8">
-    <b>Format :</b> 4 séances de 45' / semaine, vestiaire à vestiaire (~38-40' effectives) — mix salle + bureau au choix, chaque semaine peut être différente. Supersets antagonistes, repos compressés sur l'isolation.<br>
-    <b>Intensité salle :</b> RIR 1-2 sur les polyarticulaires, RIR 0-1 sur l'isolation, charges lourdes 6-10 reps.<br>
-    <b>Intensité bureau :</b> charge légère = échec obligatoire (0-1 rep de l'échec), tempo contrôlé, myo-reps.<br>
-    <b>Épaules — reprise :</b> développé militaire en rampe semaines 1-2 : 8-10 reps RIR 3, amplitude complète sans douleur.<br>
-    <b>Progression :</b> double progression. Salle : haut de fourchette sur toutes les séries → +2,5 kg. Bureau : +reps → tempo plus lent → repos réduit → élastique plus dur.</p>
+    <b>Format :</b> 4 séances de 60' en salle, vestiaire à vestiaire (~50' effectives). <b>Haut / Bas ×2</b> : chaque muscle est travaillé 2 fois par semaine — le meilleur rapport volume / récupération sur 4 séances.<br>
+    <b>Structure d'une séance :</b> 1 exercice lourd d'abord (militaire, squat, traction lestée, RDL) tant que tu es frais, puis le volume, puis l'isolation en superset pour tenir dans les 50 minutes.<br>
+    <b>Intensité :</b> RIR 1-2 sur les polyarticulaires, RIR 0-1 sur l'isolation. Fourchettes 5-10 reps sur les lourds, 10-20 sur l'isolation.<br>
+    <b>Repos :</b> 3 min sur le squat, 2'30 sur les autres lourds, 60" sur l'isolation. Ne les raccourcis pas sur les lourds : c'est ce qui permet la charge.<br>
+    <b>Progression :</b> double progression. Haut de fourchette atteint sur <i>toutes</i> les séries au RIR cible → <b>+2,5 kg</b> la séance suivante, puis tu repars en bas de fourchette. L'appli te le signale (💡) au lancement du raid.<br>
+    <b>Volume hebdo :</b> ~10-11 séries/semaine pour épaules, dos, quadriceps et ischios · 7-8 pour pectoraux et mollets · 9 pour les abdos · 3 directes pour biceps et triceps (le reste vient des tirages et des poussées). C'est la zone qui produit le plus d'hypertrophie sans dépasser ta récupération.</p>
   </div>
   <div class="note" style="margin-bottom:16px">
     <b>Règles d'enchaînement :</b><br>
-    • Jamais Salle 1 et Bureau 3 sur deux jours consécutifs — 48 h minimum entre les deux séances jambes.<br>
-    • Jamais Bureau 1 la veille de Salle 3 — les tractions à l'échec plombent le rowing lourd.<br>
-    • Tout le reste est librement permutable.
+    • <b>Alterne Haut et Bas</b> — jamais deux séances du bas consécutives : 48 h minimum entre Bas A (squat) et Bas B (RDL), ils partagent les mêmes ischios et le même bas du dos.<br>
+    • <b>Semaine type :</b> Lun Haut A · Mar Bas A · Jeu Haut B · Ven Bas B. Décale librement, l'ordre Haut→Bas→Haut→Bas est ce qui compte.<br>
+    • Si tu ne peux faire que 3 séances une semaine : garde Haut A, Bas A et Haut B (les deux lourds + le tirage).
   </div>
   <div class="panel" style="margin-bottom:16px"><h3>Programme 12 semaines · suivi</h3>
-    <p class="muted" style="line-height:1.7;margin-bottom:10px">La périodisation se superpose à ton libre choix de séances : elle pilote l'<b>intensité</b> (RIR, charges, deload), pas l'ordre des séances. Règle la date de départ une fois. <b>Elle est active :</b> à chaque lancement de raid, la cible du bloc en cours s'affiche sous chaque exercice (📅), et les semaines 6 et 12 appliquent le deload automatiquement (−1 série/exo, finishers bureau retirés, consigne charge −10 % / pas d'échec). Les cibles restent indicatives — c'est toi qui saisis charges et reps réelles.</p>
+    <p class="muted" style="line-height:1.7;margin-bottom:10px">La périodisation se superpose à ton libre choix de séances : elle pilote l'<b>intensité</b> (RIR, charges, deload), pas l'ordre des séances. Règle la date de départ une fois. <b>Elle est active :</b> à chaque lancement de raid, la cible du bloc en cours s'affiche sous chaque exercice (📅), et les semaines 6 et 12 appliquent le deload automatiquement (−1 série/exo, consigne charge −10 % et RIR +2). Les cibles restent indicatives — c'est toi qui saisis charges et reps réelles.</p>
     <div class="row" style="align-items:flex-end;gap:12px">
       <label class="fld" style="max-width:220px;display:block">Début du programme
         <input type="date" id="prog-start" onchange="setProgStart(this.value)" style="height:38px">
@@ -571,105 +572,106 @@ html{scrollbar-color:#4A3A2C var(--bg)}
   <details class="panel ref">
     <summary>Plan de progression · 12 semaines</summary>
     <div class="rbody">
-      <p>Construit <b>par-dessus ta semaine libre à 4 séances</b> : tu choisis chaque semaine quelles séances faire (variantes A/B au lancement), en respectant tes contraintes (48 h entre les deux jambes, Bureau 1 jamais la veille de Salle 3). Ce plan ajoute la <b>périodisation d'intensité</b> + les <b>substitutions haltères</b> au bureau.</p>
+      <p>Ce plan se superpose à tes <b>4 séances en salle</b> (Haut A · Bas A · Haut B · Bas B). Il ne change pas les exercices : il pilote l'<b>intensité</b> — combien de reps, à quel RIR, quand pousser et quand lever le pied.</p>
 
-      <h4>1 · Matériel bureau &rarr; substitutions</h4>
-      <p>Matériel : haltères chargeables jusqu'à <b>2&times;10 kg</b> (mains) ou <b>1&times;18 kg</b> (une main) + sac à dos + élastiques.</p>
+      <h4>1 · La semaine type</h4>
       <div class="tblwrap"><table>
-        <tr><th>Exercice (dashboard)</th><th>Substitution haltères</th></tr>
-        <tr><td>Bureau 2 — Dips lestés</td><td>Haltères dans le sac à dos (jusqu'à 20 kg)</td></tr>
-        <tr><td>Bureau 2 — Pompes déficit lestées dos</td><td>Sac à dos chargé d'haltères (10 &rarr; 20 kg)</td></tr>
-        <tr><td>Bureau 3 — Split squat bulgare</td><td>2&times;10 kg en suitcase (20 kg total), bras le long du corps</td></tr>
-        <tr><td>Bureau 3 — SDT roumain unilatéral</td><td>1&times;18 kg tenu en main (controlatéral au pied d'appui)</td></tr>
+        <tr><th>Jour</th><th>Séance</th><th>Exercice lourd</th><th>Dominante</th></tr>
+        <tr><td>Lundi</td><td><b>Haut A — Poussée</b></td><td>Développé militaire</td><td>Épaules, pectoraux, triceps + rowing</td></tr>
+        <tr><td>Mardi</td><td><b>Bas A — Quadriceps</b></td><td>Squat barre</td><td>Quadriceps, mollets, abdos</td></tr>
+        <tr><td>Mercredi</td><td colspan="3"><i>Repos (marche, 8-10 000 pas)</i></td></tr>
+        <tr><td>Jeudi</td><td><b>Haut B — Tirage</b></td><td>Traction lestée</td><td>Dos, pectoraux, biceps, épaules</td></tr>
+        <tr><td>Vendredi</td><td><b>Bas B — Postérieure</b></td><td>SDT roumain</td><td>Ischios, fessiers, mollets, abdos</td></tr>
+        <tr><td>Week-end</td><td colspan="3"><i>Repos</i></td></tr>
       </table></div>
-      <p><b>Plafond ~20 kg au bureau</b> : la charge n'est pas le levier principal. Tu progresses dans cet ordre : <b>+reps &rarr; tempo plus lent &rarr; repos réduit &rarr; myo-reps &rarr; élastique plus dur</b>, puis unilatéral plus strict ou pause isométrique en bas.</p>
+      <p><b>Règle unique :</b> alterne Haut et Bas, et laisse <b>48 h entre Bas A et Bas B</b> (ils partagent ischios et bas du dos). Le reste est déplaçable selon ta semaine.</p>
 
-      <h4>2 · Périodisation en un coup d'œil</h4>
+      <h4>2 · Volume hebdomadaire par muscle</h4>
+      <p>Chaque muscle est touché <b>2 fois par semaine</b> — c'est l'intérêt du Haut/Bas et ce qui change le plus par rapport à ton ancien programme.</p>
       <div class="tblwrap"><table>
-        <tr><th>Sem.</th><th>Bloc</th><th>Objectif</th><th>Salle</th><th>Bureau</th></tr>
-        <tr><td>1</td><td>Calibrage</td><td>Ré-établir les charges</td><td>RIR 2-3, haut de fourchette</td><td>tempo contrôlé, 1 rep avant l'échec (iso)</td></tr>
-        <tr><td>2-5</td><td>Accumulation</td><td>Construire le volume</td><td>RIR 1-2 poly · 0-1 iso</td><td>échec sur l'iso, +reps/sem</td></tr>
-        <tr><td>6</td><td><b>Deload</b></td><td>Récupérer</td><td>-1 série, charge -10 %, RIR +2</td><td>volume -40 %, pas d'échec</td></tr>
-        <tr><td>7-9</td><td>Intensification</td><td>Charges lourdes, reps basses</td><td>RIR 1, fourchettes basses</td><td>repos réduits, myo-reps, élastique +</td></tr>
-        <tr><td>10-11</td><td>Pic / PR</td><td>Tester les maxis</td><td>charges max, test PR</td><td>densité max</td></tr>
-        <tr><td>12</td><td>Deload + bilan</td><td>Récup + photos/mensurations</td><td>léger</td><td>léger</td></tr>
-      </table></div>
-      <p><b>Repère 8 semaines :</b> Sem 1&rarr;6 à l'identique, puis Sem 7-8 en mini-pic (intensification courte + test léger fin sem. 8) et stop. Cycle complet calibrage &rarr; accumulation &rarr; deload &rarr; intensification &rarr; test.</p>
-
-      <h4>3 · Progression par séance — SALLE</h4>
-      <p><b>Logique :</b> double progression. Haut de fourchette sur toutes les séries en respectant le RIR &rarr; +2,5 kg, puis on repart en bas de fourchette.</p>
-      <p style="margin-top:8px"><b>Salle 1 — Jambes</b></p>
-      <div class="tblwrap"><table>
-        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
-        <tr><td>Squat barre</td><td>4&times;8 RIR 2-3</td><td>4&times;6-8 RIR 1-2, +2,5 kg si 4&times;8 propre</td><td>4&times;5-6 RIR 1</td><td>4&times;4-5, test 5RM</td></tr>
-        <tr><td>Fentes marchées haltères</td><td>3&times;10/j RIR 2</td><td>3&times;10/j RIR 1, +charge</td><td>3&times;8/j +charge</td><td>3&times;8/j lourd</td></tr>
-        <tr><td>SS leg curl + mollets</td><td>3&times;12 / 3&times;15</td><td>3&times;10-12 / 3&times;12-15 RIR 0-1</td><td>idem, repos -15"</td><td>idem</td></tr>
-        <tr><td>SDT roumain (var. B)</td><td>3&times;10 RIR 3</td><td>3&times;8-10 RIR 1-2, +charge</td><td>3&times;6-8 lourd</td><td>3&times;6 lourd</td></tr>
-        <tr><td>Crunch câble/roulette</td><td>2&times;15</td><td>2&times;12-15 RIR 1</td><td>2&times;12 +résistance</td><td>2&times;12</td></tr>
-      </table></div>
-      <p style="margin-top:8px"><b>Salle 2 — Push</b> (épaule OK &rarr; militaire 4&times;6-8 dès Sem 1)</p>
-      <div class="tblwrap"><table>
-        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
-        <tr><td>Développé militaire debout</td><td>4&times;8 RIR 2</td><td>4&times;6-8 RIR 1-2, +2,5 kg</td><td>4&times;5-6 RIR 1</td><td>4&times;4-5, test</td></tr>
-        <tr><td>DC haltères incliné</td><td>3&times;10 RIR 2</td><td>3&times;8-10 RIR 1, +charge</td><td>3&times;6-8 lourd</td><td>3&times;6</td></tr>
-        <tr><td>SS élév. lat. + écartés</td><td>4&times;15 / 3&times;12</td><td>4&times;12-15 / 3&times;12 RIR 0</td><td>idem, repos -15"</td><td>idem</td></tr>
-        <tr><td>Élévations latérales (var. B)</td><td>4&times;15</td><td>4&times;12-15 RIR 0</td><td>drop-set dernière série</td><td>idem</td></tr>
-        <tr><td>Rowing barre</td><td>3&times;10</td><td>3&times;8-10 RIR 1-2, +charge</td><td>3&times;6-8 lourd</td><td>3&times;6</td></tr>
-        <tr><td>Extension triceps corde</td><td>3&times;12</td><td>3&times;10-12 RIR 0-1</td><td>+ myo-reps</td><td>idem</td></tr>
-      </table></div>
-      <p style="margin-top:8px"><b>Salle 3 — Pull</b></p>
-      <div class="tblwrap"><table>
-        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
-        <tr><td>Rowing barre / T-bar</td><td>4&times;10 RIR 2</td><td>4&times;8-10 RIR 1-2, +2,5 kg</td><td>4&times;6-8 lourd</td><td>4&times;6, test</td></tr>
-        <tr><td>Tirage vertical large, pause 1"</td><td>3&times;12</td><td>3&times;10-12 RIR 1, +charge</td><td>3&times;8-10 lourd</td><td>3&times;8</td></tr>
-        <tr><td>SS face pull + curl incliné</td><td>3&times;15 / 3&times;10</td><td>idem RIR 0-1</td><td>repos -15"</td><td>idem</td></tr>
-        <tr><td>Curl marteau</td><td>2&times;12</td><td>2&times;12 RIR 0, +charge</td><td>+ myo-reps</td><td>idem</td></tr>
+        <tr><th>Muscle</th><th>Séries directes / sem.</th><th>D'où</th></tr>
+        <tr><td>Épaules</td><td>~10</td><td>Militaire 4 + latérales 3 + 3 (les latérales 2×/sem = le levier n°1 pour la largeur)</td></tr>
+        <tr><td>Dos</td><td>~11</td><td>Rowing 4 + tractions 4 + tirage 3 (+ face pull et oiseau)</td></tr>
+        <tr><td>Quadriceps</td><td>~10</td><td>Squat 4 + presse 3 + gobelet/hack 3</td></tr>
+        <tr><td>Ischios / fessiers</td><td>~10</td><td>RDL 4 + leg curl 3 + 3</td></tr>
+        <tr><td>Pectoraux</td><td>~7</td><td>Incliné 3 + couché haltères 4 (+ militaire en indirect)</td></tr>
+        <tr><td>Mollets</td><td>8</td><td>Debout 4 + assis 4 (deux angles : genou tendu et fléchi)</td></tr>
+        <tr><td>Biceps</td><td>3 directes</td><td>SS curl incliné + marteau — le reste vient des 11 séries de tirage</td></tr>
+        <tr><td>Triceps</td><td>3 directes</td><td>Extension corde — le reste vient du militaire et des développés</td></tr>
+        <tr><td>Abdos</td><td>9</td><td>Relevé de jambes 3 + crunch câble 3 + roulette 3</td></tr>
       </table></div>
 
-      <h4>Progression par séance — BUREAU</h4>
-      <p>Charge plafonnée &rarr; progression par reps / tempo / densité.</p>
-      <p style="margin-top:8px"><b>Bureau 1 — Pull + bras</b></p>
+      <h4>3 · Périodisation en un coup d'œil</h4>
       <div class="tblwrap"><table>
-        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
-        <tr><td>Tractions 5&times;max-1</td><td>40 reps tot.</td><td>+2-3 reps tot./sem, myo-reps si &gt;12</td><td>tempo 2-1-2</td><td>lestées (5-10 kg) si &gt;50 reps</td></tr>
-        <tr><td>Rowing élastique pause 1"</td><td>4&times;15</td><td>4&times;15-20 échec</td><td>repos -15"</td><td>élastique + dur</td></tr>
-        <tr><td>SS curl + ext. triceps élast.</td><td>4&times;15</td><td>4&times;15-20 échec</td><td>+ myo-reps</td><td>élastique + dur</td></tr>
-        <tr><td>Tirage face élastique</td><td>3&times;18</td><td>3&times;20 échec</td><td>repos -10"</td><td>élastique + dur</td></tr>
-      </table></div>
-      <p style="margin-top:8px"><b>Bureau 2 — Push</b> (lestage = sac à dos chargé d'haltères)</p>
-      <div class="tblwrap"><table>
-        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
-        <tr><td>Dips lestés (sac)</td><td>4&times;8 à 10 kg</td><td>4&times;8-12, +2,5 kg si 4&times;12</td><td>4&times;8-10 + tempo 3-0-1</td><td>sac 20 kg</td></tr>
-        <tr><td>Pompes déficit lestées 3-0-1</td><td>4&times;12 à 10 kg</td><td>4&times;12-15 échec, +charge</td><td>déficit + grand</td><td>sac 20 kg</td></tr>
-        <tr><td>SS développé élast. + élév. lat.</td><td>4&times;15</td><td>4&times;15-20 échec</td><td>+ myo-reps</td><td>élastique + dur</td></tr>
-        <tr><td>Pompes diamant (finisher)</td><td>2&times;max</td><td>2&times;max</td><td>2&times;max + déficit</td><td>2&times;max</td></tr>
-      </table></div>
-      <p style="margin-top:8px"><b>Bureau 3 — Jambes post.</b> (suitcase 2&times;10 kg / SDT 1&times;18 kg)</p>
-      <div class="tblwrap"><table>
-        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
-        <tr><td>Split squat bulgare 3-1-1</td><td>4&times;10/j</td><td>4&times;10-12/j RIR 0-1</td><td>pause 1" en bas</td><td>+ tempo 4-1-1</td></tr>
-        <tr><td>SDT roumain unilatéral 18 kg</td><td>3&times;12/j</td><td>3&times;12/j contrôle</td><td>tempo 3-0-1</td><td>pause étirée</td></tr>
-        <tr><td>Leg curl élast. / nordic</td><td>3&times;8</td><td>3&times;8-10 échec excentr.</td><td>nordic amplitude +</td><td>idem</td></tr>
-        <tr><td>SS mollets unilat. + sissy squat</td><td>3&times;15 / 2&times;12</td><td>3&times;15-20 / 2&times;12</td><td>repos -15"</td><td>idem</td></tr>
+        <tr><th>Sem.</th><th>Bloc</th><th>Objectif</th><th>Consigne</th></tr>
+        <tr><td>1</td><td>Calibrage</td><td>Ré-établir tes charges</td><td>RIR 2-3, haut de fourchette, sans forcer</td></tr>
+        <tr><td>2-5</td><td>Accumulation</td><td>Construire le volume</td><td>RIR 1-2 sur les lourds · 0-1 sur l'isolation · +reps chaque semaine</td></tr>
+        <tr><td>6</td><td><b>Deload</b></td><td>Récupérer</td><td>−1 série/exo, charge −10 %, RIR +2, pas d'échec</td></tr>
+        <tr><td>7-9</td><td>Intensification</td><td>Charges lourdes</td><td>RIR 1, bas de fourchette, repos complets sur les lourds</td></tr>
+        <tr><td>10-11</td><td>Pic / PR</td><td>Tester les maxis</td><td>Test 5RM squat, militaire, rowing, traction lestée max</td></tr>
+        <tr><td>12</td><td>Deload + bilan</td><td>Récup + mesures</td><td>Léger, photos et mensurations, puis nouveau cycle</td></tr>
       </table></div>
 
-      <h4>4 · Deload (Sem 6 &amp; 12)</h4>
+      <h4>4 · Progression par exercice</h4>
+      <p><b>Double progression :</b> tu montes en reps dans la fourchette, et quand tu atteins le haut sur <i>toutes</i> les séries au RIR cible, tu ajoutes <b>+2,5 kg</b> et tu repars en bas de fourchette. L'appli te le rappelle (💡) sous chaque exercice au lancement du raid.</p>
+
+      <p style="margin-top:8px"><b>Haut A — Poussée</b></p>
+      <div class="tblwrap"><table>
+        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
+        <tr><td>Développé militaire debout</td><td>4&times;8 RIR 2-3</td><td>4&times;5-8 RIR 1-2, +2,5 kg si 4&times;8</td><td>4&times;4-6 RIR 1</td><td>4&times;3-5, test 5RM</td></tr>
+        <tr><td>DC haltères incliné</td><td>3&times;10 RIR 2</td><td>3&times;6-10 RIR 1-2, +charge</td><td>3&times;5-8 lourd</td><td>3&times;5-6</td></tr>
+        <tr><td>Rowing barre</td><td>4&times;10 RIR 2</td><td>4&times;6-10 RIR 1-2, +2,5 kg</td><td>4&times;5-8 lourd</td><td>4&times;5-6, test</td></tr>
+        <tr><td>SS élév. latérales + face pull</td><td>3&times;15 / 3&times;20</td><td>3&times;12-20 RIR 0-1</td><td>idem, repos −15"</td><td>drop-set dernière série</td></tr>
+        <tr><td>Extension triceps corde</td><td>3&times;15</td><td>3&times;10-15 RIR 0-1</td><td>+ myo-reps</td><td>idem</td></tr>
+        <tr><td>Relevé de jambes suspendu</td><td>3&times;12</td><td>3&times;10-15 RIR 0-1</td><td>+ lest cheville</td><td>idem</td></tr>
+      </table></div>
+
+      <p style="margin-top:8px"><b>Bas A — Quadriceps</b></p>
+      <div class="tblwrap"><table>
+        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
+        <tr><td>Squat barre</td><td>4&times;8 RIR 2-3</td><td>4&times;5-8 RIR 1-2, +2,5 kg si 4&times;8</td><td>4&times;4-6 RIR 1</td><td>4&times;3-5, test 5RM</td></tr>
+        <tr><td>Presse à cuisses</td><td>3&times;12 RIR 2</td><td>3&times;10-12 RIR 1, +charge</td><td>3&times;8-10 lourd</td><td>3&times;8 lourd</td></tr>
+        <tr><td>Leg curl assis</td><td>3&times;15</td><td>3&times;10-15 RIR 0-1, +charge</td><td>idem, repos −15"</td><td>idem</td></tr>
+        <tr><td>Mollets debout</td><td>4&times;15</td><td>4&times;10-15 RIR 0-1, +charge</td><td>pause 2" en bas</td><td>idem</td></tr>
+        <tr><td>Crunch câble</td><td>3&times;15</td><td>3&times;12-15 RIR 1</td><td>3&times;12 +résistance</td><td>idem</td></tr>
+      </table></div>
+
+      <p style="margin-top:8px"><b>Haut B — Tirage</b></p>
+      <div class="tblwrap"><table>
+        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
+        <tr><td>Tractions lestées</td><td>4&times;8 poids du corps</td><td>4&times;6-10 lestées, +2,5 kg si 4&times;10</td><td>4&times;5-8 lest lourd</td><td>4&times;4-6, test lest max</td></tr>
+        <tr><td>DC haltères (plat)</td><td>4&times;12 RIR 2</td><td>4&times;8-12 RIR 1, +charge</td><td>4&times;6-10 lourd</td><td>4&times;6-8</td></tr>
+        <tr><td>Tirage vertical, pause 1"</td><td>3&times;12</td><td>3&times;10-12 RIR 1, +charge</td><td>3&times;8-10 lourd</td><td>3&times;8</td></tr>
+        <tr><td>SS élév. latérales + oiseau</td><td>3&times;15 / 3&times;20</td><td>3&times;12-20 RIR 0</td><td>idem, repos −15"</td><td>drop-set dernière série</td></tr>
+        <tr><td>SS curl incliné + marteau</td><td>3&times;12</td><td>3&times;10-12 RIR 0-1, +charge</td><td>+ myo-reps</td><td>idem</td></tr>
+      </table></div>
+
+      <p style="margin-top:8px"><b>Bas B — Chaîne postérieure</b></p>
+      <div class="tblwrap"><table>
+        <tr><th>Exo</th><th>Sem 1</th><th>Sem 2-5</th><th>Sem 7-9</th><th>Sem 10-11</th></tr>
+        <tr><td>SDT roumain</td><td>4&times;10 RIR 2-3</td><td>4&times;6-10 RIR 1-2, +2,5 kg</td><td>4&times;5-8 lourd</td><td>4&times;5-6, test</td></tr>
+        <tr><td>Squat gobelet / hack squat</td><td>3&times;12 RIR 2</td><td>3&times;10-12 RIR 1, +charge</td><td>3&times;8-10 lourd</td><td>3&times;8</td></tr>
+        <tr><td>Leg curl allongé</td><td>3&times;15</td><td>3&times;10-15 RIR 0-1, +charge</td><td>idem, repos −15"</td><td>idem</td></tr>
+        <tr><td>Mollets assis</td><td>4&times;20</td><td>4&times;12-20 RIR 0-1, +charge</td><td>pause 2" en bas</td><td>idem</td></tr>
+        <tr><td>Roulette abdos</td><td>3&times;10</td><td>3&times;8-12 contrôle</td><td>amplitude +</td><td>debout si possible</td></tr>
+      </table></div>
+
+      <h4>5 · Deload (Sem 6 &amp; 12)</h4>
       <ul>
-        <li>Mêmes exercices : c'est le volume et l'intensité qui baissent.</li>
-        <li>Salle : -1 série/exo, charge -10 %, arrête 2-3 reps avant l'échec (RIR +2).</li>
-        <li>Bureau : pas d'échec, -40 % de séries sur l'iso, supprime les finishers.</li>
-        <li>Objectif : arriver frais en Sem 7. Si très frais en Sem 6, raccourcis à 3 séances.</li>
+        <li>Mêmes exercices : c'est le volume et l'intensité qui baissent, pas la technique.</li>
+        <li>−1 série par exercice (l'appli le fait automatiquement), charge −10 %, arrête 2-3 reps avant l'échec (RIR +2).</li>
+        <li>Objectif : arriver frais en Sem 7. Si tu te sens très frais dès la Sem 6, tu peux ne faire que 3 séances.</li>
       </ul>
 
-      <h4>5 · Suivi (cohérent avec ton XP)</h4>
+      <h4>6 · Suivi</h4>
       <ul>
-        <li>Note charge + reps réelles chaque séance — base de la double progression.</li>
-        <li>Salle : haut de fourchette sur toutes les séries au RIR cible &rarr; +2,5 kg séance suivante.</li>
-        <li>Bureau : haut de fourchette en tempo lent 2 séances de suite &rarr; durcis (tempo/repos/élastique/charge).</li>
-        <li>Jalons : photo #1 fin d'accumulation, photo #2 / test PR au pic (Sem 10-11), photo finale Sem 12.</li>
+        <li>Note charge + reps réelles à chaque série — c'est la base de la double progression et des records.</li>
+        <li>Onglet <b>Archives</b> : la courbe 1RM estimé par exercice te dit si tu progresses vraiment, au-delà du ressenti.</li>
+        <li>Pèse-toi le matin à jeun ; c'est la <b>moyenne hebdo</b> qui compte, pas le chiffre du jour. Cible +0,2 kg/semaine.</li>
+        <li>Jalons : photo #1 fin d'accumulation (Sem 5), photo #2 + tests PR au pic (Sem 10-11), photo finale Sem 12.</li>
       </ul>
 
-      <p class="refnote" style="color:var(--warn);margin-top:12px"><b>À garder en tête :</b> charges et fourchettes = points de départ, pas des cibles absolues. Le RIR cible prime sur le chiffre. La structure applique la surcharge progressive (principe établi) ; les valeurs précises (+2,5 kg, -10 %) sont des conventions pratiques. Douleur articulaire (épaule) &rarr; réduis amplitude/charge avant de pousser.</p>
+      <p class="refnote" style="color:var(--warn);margin-top:12px"><b>À garder en tête :</b> charges et fourchettes sont des points de départ, pas des cibles absolues — le RIR prime sur le chiffre. La structure applique la surcharge progressive (principe établi) ; les valeurs précises (+2,5 kg, −10 %) sont des conventions pratiques. Toute douleur articulaire : réduis l'amplitude ou la charge avant de pousser.</p>
     </div>
   </details>
 
@@ -686,7 +688,7 @@ html{scrollbar-color:#4A3A2C var(--bg)}
         <tr><td>Glucides</td><td>360 g</td><td>1 440</td><td>carburant + muscles pleins</td></tr>
         <tr><td>Lipides</td><td>75 g</td><td>675</td><td>~0,9 g/kg, plancher hormonal</td></tr>
       </table></div>
-      <p><b>La règle qui fait le travail :</b> pèse-toi le matin à jeun, regarde la <b>moyenne hebdo</b>. Cible <b>+0,2 kg/sem</b>. &gt;0,4 kg/sem &rarr; -150-200 kcal (glucides). Aucune prise sur 2-3 sem &rarr; +200 kcal (glucides). Alternative : recomposition à maintenance (~2 550 kcal, ~300 g glucides). <b>Passage de 5 à 4 séances/sem :</b> dépense hebdo réduite d'environ une séance (~300-400 kcal/sem, soit ~50 kcal/j lissés) — la règle de pesée hebdo ci-dessus suffit à ajuster, pas besoin de recalculer.</p>
+      <p><b>La règle qui fait le travail :</b> pèse-toi le matin à jeun, regarde la <b>moyenne hebdo</b>. Cible <b>+0,2 kg/sem</b>. &gt;0,4 kg/sem &rarr; -150-200 kcal (glucides). Aucune prise sur 2-3 sem &rarr; +200 kcal (glucides). Alternative : recomposition à maintenance (~2 550 kcal, ~300 g glucides). <b>Passage aux séances de 60' en salle :</b> séances plus longues et plus lourdes qu'au bureau — la dépense remonte un peu. Ne recalcule rien : la pesée hebdo ci-dessus ajuste toute seule. Le poids saisi dans l'onglet Statut alimente directement cette règle.</p>
 
       <h4>2 · Répartition sur la journée</h4>
       <ul>
@@ -829,56 +831,42 @@ function exo(name,target,rest,intensity,variant,zones,defSets){
 }
 function defaultSessions(){
   return [
-    {id:uid(),key:'salle1',name:'Salle 1 — Jambes',loc:'salle',color:'#3FBF9F',
-     note:'Variante B : le RDL remplace le superset leg curl — le postérieur lourd doit rentrer ici. Choix A/B au lancement du raid.',
+    {id:uid(),key:'hautA',name:'Haut A — Poussée',loc:'salle',color:'#EF854B',
+     note:'Séance de force du haut : militaire et incliné lourds pendant que tu es frais. Le rowing équilibre le volume de poussée. Épaule OK → amplitude complète.',
      exos:[
-      exo('Squat barre','4 × 6-8',"2'30",'RIR 1-2',null,{quadris:2,ischios:1},4),
-      exo('Fentes marchées haltères','3 × 10/jambe','90"','RIR 1',null,{quadris:2,ischios:1},3),
-      exo('Superset : leg curl assis + mollets debout','3 × 10-12 / 3 × 12-15','75"','RIR 0-1','A',{ischios:2,mollets:2},3),
-      exo('Soulevé de terre roumain','3 × 8-10',"2'",'RIR 1-2','B',{ischios:2,dos:1},3),
-      exo('Crunch câble ou roulette abdos','2 × 12-15','60"','RIR 1',null,{abdos:2},2),
+      exo('Développé militaire debout','4 × 5-8',"2'30",'RIR 1-2',null,{epaules:2,triceps:1},4),
+      exo('Développé couché haltères incliné','3 × 6-10',"2'",'RIR 1-2',null,{pecs:2,triceps:1,epaules:1},3),
+      exo('Rowing barre','4 × 6-10',"2'",'RIR 1-2',null,{dos:2,biceps:1},4),
+      exo('Superset : élévations latérales + face pull','3 × 12-20 / 3 × 15-20','60"','RIR 0-1',null,{epaules:2,dos:1},3),
+      exo('Extension triceps corde','3 × 10-15','60"','RIR 0-1',null,{triceps:2},3),
+      exo('Relevé de jambes suspendu','3 × 10-15','60"','RIR 0-1',null,{abdos:2},3),
      ]},
-    {id:uid(),key:'salle2',name:'Salle 2 — Push',loc:'salle',color:'#B87333',
-     note:'Échauffement épaules systématique aux élastiques. Reprise militaire sem. 1-2 : 8-10 reps RIR 3, sans douleur.',
+    {id:uid(),key:'basA',name:'Bas A — Quadriceps',loc:'salle',color:'#7FC8A0',
+     note:'Journée du squat lourd : 3 min de repos sur les séries de travail, c\'est ce qui te fait progresser en charge. Le reste construit le volume.',
      exos:[
-      exo('Développé militaire debout','4 × 6-8 (sem. 1-2 : 8-10)',"2'30",'RIR 1-2',null,{epaules:2,triceps:1},4),
-      exo('Développé couché haltères, légère inclinaison','3 × 8-10',"2'",'RIR 1',null,{pecs:2,triceps:1,epaules:1},3),
-      exo('Superset : élévations latérales + écartés câble','4 × 12-15 / 3 × 12','60"','RIR 0','A',{epaules:2,pecs:1},4),
-      exo('Élévations latérales','4 × 12-15','60"','RIR 0','B',{epaules:2},4),
-      exo('Rowing barre','3 × 8-10','90"','RIR 1-2','B',{dos:2,biceps:1},3),
-      exo('Extension triceps corde','3 × 10-12','60"','RIR 0-1',null,{triceps:2},3),
+      exo('Squat barre','4 × 5-8',"3'",'RIR 1-2',null,{quadris:2,ischios:1},4),
+      exo('Presse à cuisses','3 × 10-12',"2'",'RIR 1',null,{quadris:2,ischios:1},3),
+      exo('Leg curl assis','3 × 10-15','90"','RIR 0-1',null,{ischios:2},3),
+      exo('Mollets debout','4 × 10-15','60"','RIR 0-1',null,{mollets:2},4),
+      exo('Crunch câble','3 × 12-15','60"','RIR 1',null,{abdos:2},3),
      ]},
-    {id:uid(),key:'salle3',name:'Salle 3 — Pull',loc:'salle',color:'#8FA7FF',
-     note:'Pause 1" en position étirée au tirage = tension maximale sur le grand dorsal.',
+    {id:uid(),key:'hautB',name:'Haut B — Tirage',loc:'salle',color:'#D9A441',
+     note:'Journée du dos et des bras. Traction lestée en premier tant que tu es frais : c\'est ton meilleur levier pour la largeur (V-taper).',
      exos:[
-      exo('Rowing barre ou T-bar','4 × 8-10',"2'",'RIR 1-2',null,{dos:2,biceps:1},4),
+      exo('Tractions lestées','4 × 6-10',"2'30",'RIR 1-2',null,{dos:2,biceps:1},4),
+      exo('Développé couché haltères','4 × 8-12',"2'",'RIR 1',null,{pecs:2,triceps:1},4),
       exo('Tirage vertical prise large, pause 1" en bas','3 × 10-12','90"','RIR 1',null,{dos:2,biceps:1},3),
-      exo('Superset : face pull + curl incliné','3 × 15 / 3 × 10','60"','RIR 0-1',null,{epaules:1,dos:1,biceps:2},3),
-      exo('Curl marteau','2 × 12','60"','RIR 0',null,{biceps:2},2),
+      exo('Superset : élévations latérales + oiseau','3 × 12-20 / 3 × 15-20','60"','RIR 0',null,{epaules:2,dos:1},3),
+      exo('Superset : curl incliné + curl marteau','3 × 10-12 chaque','60"','RIR 0-1',null,{biceps:2},3),
      ]},
-    {id:uid(),key:'bureau1',name:'Bureau 1 — Pull + bras',loc:'bureau',color:'#8C6FE0',
-     note:'Charge légère = échec obligatoire sur chaque série d\'isolation (Lasevicius 2018).',
+    {id:uid(),key:'basB',name:'Bas B — Chaîne postérieure',loc:'salle',color:'#E5654E',
+     note:'Le RDL est l\'exercice lourd du jour : dos gainé, bassin qui recule, étirement contrôlé des ischios. Complète le squat de Bas A.',
      exos:[
-      exo('Tractions : 5 × max−1 (myo-reps si >12)','40-50 reps totales','90"','échec proche',null,{dos:2,biceps:1},5),
-      exo('Rowing élastique, pause 1" en contraction','4 × 15-20','60"','échec',null,{dos:2},4),
-      exo('Superset : curl élastique + extension triceps élastique','4 × 15-20 chaque','45"','échec',null,{biceps:2,triceps:2},4),
-      exo('Tirage face élastique (arrière épaule)','3 × 20','45"','échec',null,{epaules:2},3),
-     ]},
-    {id:uid(),key:'bureau2',name:'Bureau 2 — Push',loc:'bureau',color:'#D4AF37',
-     note:'Dips lestés = exercice lourd du bureau : descente contrôlée, buste penché pour les pectoraux.',
-     exos:[
-      exo('Dips lestés (haltères dans sac à dos)','4 × 8-12','90"','RIR 0-1',null,{pecs:2,triceps:1},4),
-      exo('Pompes déficit, haltères dans le sac à dos, tempo 3-0-1','4 × 12-15','75"','échec',null,{pecs:2,triceps:1},4),
-      exo('Superset : développé élastique + élévations latérales','4 × 15-20 chaque','45"','échec',null,{epaules:2,triceps:1},4),
-      exo('Pompes diamant — finisher','2 × max','60"','échec',null,{triceps:2,pecs:1},2),
-     ]},
-    {id:uid(),key:'bureau3',name:'Bureau 3 — Jambes post.',loc:'bureau',color:'#E85D4A',
-     note:'Unilatéral + tempo lent + échec : les trois leviers qui rendent 20 kg suffisants. Le nordic corrige le déséquilibre quadri/ischios.',
-     exos:[
-      exo('Split squat bulgare haltères 2 × 10 kg, tempo 3-1-1','4 × 10-12/jambe','90"','RIR 0-1',null,{quadris:2,ischios:1},4),
-      exo('Soulevé de terre roumain unilatéral haltère 18 kg','3 × 12/jambe','75"','contrôle',null,{ischios:2},3),
-      exo('Leg curl élastique ou nordic excentrique','3 × 8-10','90"','échec excentrique',null,{ischios:2},3),
-      exo('Superset : mollets unilatéral + sissy squat','3 × 15-20 / 2 × 12','45"','brûlure',null,{mollets:2,quadris:1},3),
+      exo('Soulevé de terre roumain','4 × 6-10',"2'30",'RIR 1-2',null,{ischios:2,dos:1},4),
+      exo('Squat gobelet ou hack squat','3 × 10-12',"2'",'RIR 1',null,{quadris:2},3),
+      exo('Leg curl allongé','3 × 10-15','90"','RIR 0-1',null,{ischios:2},3),
+      exo('Mollets assis','4 × 12-20','60"','RIR 0-1',null,{mollets:2},4),
+      exo('Roulette abdos (ab wheel)','3 × 8-12','60"','contrôle',null,{abdos:2},3),
      ]},
   ];
 }
@@ -901,12 +889,18 @@ function exBW(e){return (e&&typeof e.bw==='boolean')?e.bw:inferBW(e&&e.name);}
 function detailBW(d){return (d&&typeof d.bw==='boolean')?d.bw:inferBW(d&&d.name);}
 /* ====== SEMAINE LIBRE — objectif 4 raids, ordre au choix ====== */
 const WEEK_TARGET=4;
+let _programUpdated=false;
 function migrateState(){
   delete S.rotWeek; delete S.viewAll; delete S.variant;
-  const map=[['Salle 1','salle1'],['Salle 2','salle2'],['Salle 3','salle3'],['Bureau 1','bureau1'],['Bureau 2','bureau2'],['Bureau 3','bureau3']];
-  (S.sessions||[]).forEach(s=>{
-    if(!s.key){const m=map.find(p=>String(s.name||'').startsWith(p[0]));if(m)s.key=m[1];}
-  });
+  /* v3 — passage au programme 100 % salle (Haut/Bas ×2, 4 séances).
+     Les séances bureau et l'ancien découpage Push/Pull sont remplacés.
+     Archives, XP, records et pesées sont conservés tels quels. */
+  if((S.progVersion||0)<3){
+    S.sessions=defaultSessions();
+    S.progVersion=3;
+    S.progStart=new Date().toISOString().slice(0,10);   // nouveau cycle de 12 semaines
+    _programUpdated=true;
+  }
 }
 /* Données embarquées : sauvegarde du 2026-07-15 — utilisée uniquement si ce navigateur n'a encore aucune donnée */
 const SEED={"sessions":[{"id":"5otqfbf","key":"salle1","name":"Salle 1 — Jambes","loc":"salle","color":"#3FBF9F","note":"Séance jambes complète : RDL lourd ET superset ischios/mollets tiennent tous les deux — plus de choix A/B, tout passe en une séance.","exos":[{"id":"877v0v3","name":"Squat barre","target":"4 × 6-8","rest":"2\u002730","intensity":"RIR 1-2","variant":null,"zones":{"quadris":2,"ischios":1},"defSets":4},{"id":"fyiapae","name":"Fentes marchées haltères","target":"3 × 10/jambe","rest":"90\"","intensity":"RIR 1","variant":null,"zones":{"quadris":2,"ischios":1},"defSets":3},{"id":"mcklklg","name":"Soulevé de terre roumain","target":"3 × 8-10","rest":"2\u0027","intensity":"RIR 1-2","variant":null,"zones":{"ischios":2,"dos":1},"defSets":3},{"id":"spo89z1","name":"Superset : leg curl assis + mollets debout","target":"3 × 10-12 / 3 × 12-15","rest":"75\"","intensity":"RIR 0-1","variant":null,"zones":{"ischios":2,"mollets":2},"defSets":3},{"id":"pw28rzp","name":"Crunch câble","target":"2 × 12-15","rest":"60\"","intensity":"RIR 1","variant":null,"zones":{"abdos":2},"defSets":2}]},{"id":"q2p3vhv","key":"salle2","name":"Salle 2 — Push","loc":"salle","color":"#B87333","note":"Échauffement épaules systématique aux élastiques. Reprise militaire sem. 1-2 : 8-10 reps RIR 3, sans douleur. Push pur : le rowing part en Salle 3 (Pull).","exos":[{"id":"ng91qt2","name":"Développé militaire debout","target":"4 × 6-8 (sem. 1-2 : 8-10)","rest":"2\u002730","intensity":"RIR 1-2","variant":null,"zones":{"epaules":2,"triceps":1},"defSets":4},{"id":"pk9u2sh","name":"Développé couché haltères incliné","target":"3 × 8-10","rest":"2\u0027","intensity":"RIR 1","variant":null,"zones":{"pecs":2,"triceps":1,"epaules":1},"defSets":3},{"id":"lhwy2ot","name":"Superset : élévations frontales + latérales (assis au banc)","target":"4 × 12-15 / 4 × 12-15","rest":"60\"","intensity":"RIR 0","variant":null,"zones":{"epaules":2},"defSets":4},{"id":"6tt12lt","name":"Extension triceps corde","target":"3 × 10-12","rest":"60\"","intensity":"RIR 0-1","variant":null,"zones":{"triceps":2},"defSets":3},{"id":"mszr5mv","name":"Relevé de jambes suspendu","target":"3 × 12-15","rest":"60\"","intensity":"RIR 0-1","variant":null,"zones":{"abdos":2},"defSets":3}]},{"id":"3oa4g1o","key":"salle3","name":"Salle 3 — Pull","loc":"salle","color":"#8FA7FF","note":"Pause 1\" en position étirée au tirage = tension maximale sur le grand dorsal.","exos":[{"id":"s65a3tz","name":"Rowing barre ou T-bar","target":"4 × 8-10","rest":"2\u0027","intensity":"RIR 1-2","variant":null,"zones":{"dos":2,"biceps":1},"defSets":4},{"id":"4xcnaji","name":"Tirage vertical prise large, pause 1\" en bas","target":"3 × 10-12","rest":"90\"","intensity":"RIR 1","variant":null,"zones":{"dos":2,"biceps":1},"defSets":3},{"id":"v6hno2w","name":"Superset : face pull + curl incliné","target":"3 × 15 / 3 × 10","rest":"60\"","intensity":"RIR 0-1","variant":null,"zones":{"epaules":1,"dos":1,"biceps":2},"defSets":3},{"id":"r4z6xtf","name":"Curl marteau","target":"2 × 12","rest":"60\"","intensity":"RIR 0","variant":null,"zones":{"biceps":2},"defSets":2},{"id":"fbocxfp","name":"Roulette abdos (ab wheel)","target":"3 × 8-12","rest":"60\"","intensity":"contrôle","variant":null,"zones":{"abdos":2},"defSets":3}]},{"id":"hnoek5u","key":"bureau1","name":"Bureau 1 — Pull + bras","loc":"bureau","color":"#8C6FE0","note":"Charge légère = échec obligatoire sur chaque série d\u0027isolation (Lasevicius 2018).","exos":[{"id":"dye2z9z","name":"Tractions : 5 × max−1 (myo-reps si \u003e12)","target":"40-50 reps totales","rest":"90\"","intensity":"échec proche","variant":null,"zones":{"dos":2,"biceps":1},"defSets":5},{"id":"9gp9dpl","name":"Rowing élastique, pause 1\" en contraction","target":"4 × 15-20","rest":"60\"","intensity":"échec","variant":null,"zones":{"dos":2},"defSets":4},{"id":"q0d4k5r","name":"Superset : curl élastique + extension triceps élastique","target":"4 × 15-20 chaque","rest":"45\"","intensity":"échec","variant":null,"zones":{"biceps":2,"triceps":2},"defSets":4},{"id":"4dijxty","name":"Tirage face élastique (arrière épaule)","target":"3 × 20","rest":"45\"","intensity":"échec","variant":null,"zones":{"epaules":2},"defSets":3},{"id":"ob7mcnb","name":"Relevé de jambes au sol","target":"3 × 15-20","rest":"45\"","intensity":"RIR 0-1","variant":null,"zones":{"abdos":2},"defSets":3}]},{"id":"yojctyy","key":"bureau2","name":"Bureau 2 — Push","loc":"bureau","color":"#D4AF37","note":"Dips lestés = exercice lourd du bureau : descente contrôlée, buste penché pour les pectoraux.","exos":[{"id":"64kfh7i","name":"Dips lestés (haltères dans sac à dos)","target":"4 × 8-12","rest":"90\"","intensity":"RIR 0-1","variant":null,"zones":{"pecs":2,"triceps":1},"defSets":4},{"id":"9ax08a4","name":"Pompes déficit, haltères dans le sac à dos, tempo 3-0-1","target":"4 × 12-15","rest":"75\"","intensity":"échec","variant":null,"zones":{"pecs":2,"triceps":1},"defSets":4},{"id":"ojxapge","name":"Superset : développé + élévations latérales","target":"4 × 15-20 chaque","rest":"45\"","intensity":"échec","variant":null,"zones":{"epaules":2,"triceps":1},"defSets":4},{"id":"t5vqtj5","name":"Superset : pompes diamant + skull crusher haltères — finisher","target":"2 × max / 2 × 12-15","rest":"60\"","intensity":"échec","variant":null,"zones":{"triceps":2,"pecs":1},"defSets":2},{"id":"dj7anf8","name":"Crunch bicyclette","target":"3 × 20/jambe","rest":"45\"","intensity":"contrôle","variant":null,"zones":{"abdos":2},"defSets":3}]},{"id":"wsirx7r","key":"bureau3","name":"Bureau 3 — Jambes post.","loc":"bureau","color":"#E85D4A","note":"Unilatéral + tempo lent + échec : les trois leviers qui rendent 20 kg suffisants. Le nordic corrige le déséquilibre quadri/ischios.","exos":[{"id":"97p43kl","name":"Split squat bulgare haltères 2 × 10 kg, tempo 3-1-1","target":"4 × 10-12/jambe","rest":"90\"","intensity":"RIR 0-1","variant":null,"zones":{"quadris":2,"ischios":1},"defSets":4},{"id":"q7xpgxs","name":"Soulevé de terre roumain unilatéral haltère 18 kg","target":"3 × 12/jambe","rest":"75\"","intensity":"contrôle","variant":null,"zones":{"ischios":2},"defSets":3},{"id":"q1xdxz9","name":"Leg curl élastique ou nordic excentrique","target":"3 × 8-10","rest":"90\"","intensity":"échec excentrique","variant":null,"zones":{"ischios":2},"defSets":3},{"id":"gra0rd3","name":"Superset : mollets unilatéral + sissy squat","target":"3 × 15-20 / 2 × 12","rest":"45\"","intensity":"brûlure","variant":null,"zones":{"mollets":2,"quadris":1},"defSets":3},{"id":"zn8509z","name":"Gainage latéral (planche latérale)","target":"3 × 30-45\"/côté","rest":"45\"","intensity":"contrôle","variant":null,"zones":{"abdos":2},"defSets":3}]}],"archive":[{"id":"2w82vlg","date":"2026-06-15","weekId":"2026-S25","name":"Bureau 1 — Pull + bras","variant":"A","rotWeek":3,"durationMin":36,"sets":18,"volume":1020,"xp":230,"full":true,"zones":{"dos":19,"biceps":12,"triceps":11,"epaules":6,"abdos":3},"detail":[{"name":"Tractions : 5 × max−1 (myo-reps si \u003e12)","target":"40-50 reps totales","sets":[{"w":"1","r":"14"},{"w":"1","r":"13"},{"w":"1","r":"10"},{"w":"1","r":"10"}]},{"name":"Rowing élastique, pause 1\" en contraction","target":"4 × 15-20","sets":[{"w":"1","r":"12"},{"w":"1","r":"12"},{"w":"1","r":"12"},{"w":"1","r":"12"}]},{"name":"Superset : curl élastique + extension triceps élastique","target":"4 × 15-20 chaque","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]},{"name":"Tirage face élastique (arrière épaule)","target":"3 × 20","sets":[{"w":"1","r":"25"},{"w":"1","r":"25"},{"w":"1","r":"25"}]},{"name":"Pull Over Slam Ball","target":"3 × 10-12","sets":[{"w":"10","r":"15"},{"w":"10","r":"12"},{"w":"10","r":"10"}]}]},{"id":"0yq60to","date":"2026-06-17","weekId":"2026-S25","name":"Salle 1 — Jambes","variant":"A","rotWeek":3,"durationMin":32,"sets":13,"volume":4824,"xp":180,"full":true,"zones":{"quadris":14,"ischios":13,"mollets":6,"abdos":6},"detail":[{"name":"Squat barre","target":"4 × 6-8","sets":[{"w":"80","r":"6"},{"w":"100","r":"6"},{"w":"100","r":"6"},{"w":"105","r":"6"}]},{"name":"Fentes marchées haltères","target":"3 × 10/jambe","sets":[{"w":"40","r":"12"},{"w":"40","r":"12"},{"w":"40","r":"12"}]},{"name":"Superset : leg curl assis + mollets debout","target":"3 × 10-12 / 3 × 12-15","sets":[{"w":"29","r":"12"},{"w":"29","r":"12"},{"w":"29","r":"12"}]},{"name":"Crunch câble ou roulette abdos","target":"2 × 12-15","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]}]},{"id":"gafzrzd","date":"2026-06-22","weekId":"2026-S26","name":"Bureau 3 — Jambes post.","variant":"A","rotWeek":4,"durationMin":35,"sets":13,"volume":1805,"xp":180,"full":true,"zones":{"quadris":11,"ischios":16,"mollets":6},"detail":[{"name":"Split squat bulgare, tempo 3-1-1","target":"4 × 10-12/jambe","sets":[{"w":"10","r":"10"},{"w":"14","r":"10"},{"w":"16","r":"10"},{"w":"16","r":"10"}]},{"name":"Soulevé de terre roumain unilatéral","target":"3 × 12/jambe","sets":[{"w":"16","r":"12"},{"w":"16","r":"12"},{"w":"16","r":"12"}]},{"name":"Leg curl élastique ou nordic excentrique","target":"3 × 8-10","sets":[{"w":"1","r":"15"},{"w":"1","r":"15"},{"w":"1","r":"15"}]},{"name":"Superset : mollets unilatéral + sissy squat","target":"3 × 15-20 / 2 × 12","sets":[{"w":"16","r":"15"},{"w":"16","r":"12"},{"w":"16","r":"12"}]}]},{"id":"9thnbo6","date":"2026-06-23","weekId":"2026-S26","name":"Bureau 1 — Pull + bras","variant":"A","rotWeek":4,"durationMin":44,"sets":23,"volume":2216,"xp":280,"full":true,"zones":{"dos":29,"biceps":18,"triceps":11,"epaules":6,"abdos":3},"detail":[{"name":"Tractions : 5 × max−1 (myo-reps si \u003e12)","target":"40-50 reps totales","sets":[{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"}]},{"name":"Rowing, pause 1\" en contraction","target":"4 × 15-20","sets":[{"w":"16","r":"15"},{"w":"18","r":"15"},{"w":"18","r":"12"}]},{"name":"Superset : curl + extension triceps","target":"4 × 15-20 chaque","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]},{"name":"Tirage face élastique (arrière épaule)","target":"3 × 20","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]},{"name":"Pull Over Slam Ball","target":"3 × 10-12","sets":[{"w":"20","r":"10"},{"w":"20","r":"10"},{"w":"20","r":"10"}]}]},{"id":"tdk3o6a","date":"2026-06-26","weekId":"2026-S26","name":"Salle 1 — Jambes","variant":"A","rotWeek":4,"durationMin":36,"sets":4,"volume":880,"xp":40,"full":false,"zones":{"quadris":8,"ischios":4},"detail":[{"name":"Squat barre","target":"4 × 6-8","sets":[{"w":"100","r":"3"},{"w":"110","r":"3"},{"w":"120","r":"1"},{"w":"130","r":"1"}]}]},{"id":"ev9khgz","date":"2026-06-29","weekId":"2026-S27","name":"Salle 1 — Jambes","variant":"B","rotWeek":5,"durationMin":29,"sets":12,"volume":2546,"xp":170,"full":true,"zones":{"quadris":14,"ischios":13,"dos":3,"abdos":4},"detail":[{"name":"Squat barre","target":"4 × 6-8","sets":[{"w":"100","r":"2"},{"w":"110","r":"2"},{"w":"120","r":"2"},{"w":"130","r":"2"}]},{"name":"Fentes marchées haltères","target":"3 × 10/jambe","sets":[{"w":"50","r":"1"},{"w":"60","r":"1"},{"w":"60","r":"1"}]},{"name":"Soulevé de terre roumain","target":"3 × 8-10","sets":[{"w":"40","r":"12"},{"w":"40","r":"12"},{"w":"40","r":"12"}]},{"name":"Crunch câble ou roulette abdos","target":"2 × 12-15","sets":[{"w":"1","r":"8"},{"w":"1","r":"8"}]}]},{"id":"zkz793a","date":"2026-07-02","weekId":"2026-S27","name":"Bureau 1 — Pull + bras","variant":null,"durationMin":51,"sets":24,"volume":1972,"xp":290,"full":true,"zones":{"dos":31,"biceps":21,"triceps":11,"epaules":6,"abdos":3},"detail":[{"name":"Tractions : 5 × 5","target":"40-50 reps totales","sets":[{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"},{"w":"1","r":"5"}]},{"name":"Rowing, pause 1\" en contraction","target":"4 × 15-20","sets":[{"w":"16","r":"15"},{"w":"16","r":"15"},{"w":"16","r":"13"},{"w":"16","r":"13"}]},{"name":"Superset : curl + extension triceps","target":"4 × 15-20 chaque","sets":[{"w":"12","r":"12"},{"w":"12","r":"12"},{"w":"12","r":"12"},{"w":"12","r":"12"}]},{"name":"Superset : Face Pull + Curl Marteau","target":"3 × 25 + 10/10","sets":[{"w":"14","r":"10"},{"w":"14","r":"10"},{"w":"14","r":"10"}]},{"name":"Pull Over Slam Ball","target":"3 × 10-12","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]}]},{"id":"eu8yhgp","date":"2026-07-03","weekId":"2026-S27","name":"Salle 1 — Jambes","variant":"B","durationMin":74,"sets":10,"volume":3370,"xp":100,"full":false,"zones":{"quadris":14,"ischios":13,"dos":3},"detail":[{"name":"Squat barre","target":"4 × 6-8","sets":[{"w":"100","r":"2"},{"w":"110","r":"2"},{"w":"120","r":"2"},{"w":"130","r":"2"}]},{"name":"Fentes marchées haltères","target":"3 × 10/jambe","sets":[{"w":"29","r":"10"},{"w":"36","r":"10"},{"w":"36","r":"10"}]},{"name":"Soulevé de terre roumain","target":"3 × 8-10","sets":[{"w":"40","r":"12"},{"w":"40","r":"12"},{"w":"40","r":"12"}]}]},{"id":"q90305b","date":"2026-07-06","weekId":"2026-S28","name":"Bureau 3 — Jambes post.","variant":null,"durationMin":38,"sets":13,"volume":1408,"xp":130,"full":false,"zones":{"quadris":11,"ischios":16,"mollets":6},"detail":[{"name":"Split squat bulgare haltères 2 × 10 kg, tempo 3-1-1","target":"4 × 10-12/jambe","sets":[{"w":"16","r":"10"},{"w":"18","r":"10"},{"w":"18","r":"10"},{"w":"18","r":"10"}]},{"name":"Soulevé de terre roumain unilatéral haltère 18 kg","target":"3 × 12/jambe","sets":[{"w":"18","r":"12"},{"w":"18","r":"12"},{"w":"18","r":"12"}]},{"name":"Leg curl élastique ou nordic excentrique","target":"3 × 8-10","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]},{"name":"Superset : mollets unilatéral + sissy squat","target":"3 × 15-20 / 2 × 12","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]}]},{"id":"ct72bzi","date":"2026-07-07","weekId":"2026-S28","name":"Bureau 2 — Push","variant":null,"durationMin":36,"sets":13,"volume":796,"xp":130,"full":false,"zones":{"pecs":17,"triceps":16,"epaules":6},"detail":[{"name":"Dips lestés (haltères dans sac à dos)","target":"4 × 8-12","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]},{"name":"Pompes déficit, haltères dans le sac à dos, tempo 3-0-1","target":"4 × 12-15","sets":[{"w":"1","r":"12"},{"w":"1","r":"12"},{"w":"1","r":"12"}]},{"name":"Superset : développé + élévations latérales","target":"4 × 15-20 chaque","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]},{"name":"Superset : pompes diamant + skull crusher haltères — finisher","target":"2 × max / 2 × 12-15","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]}]},{"id":"aeofdyk","date":"2026-07-14","weekId":"2026-S29","name":"Salle 2 — Push","variant":null,"durationMin":45,"sets":18,"volume":3890,"xp":230,"full":true,"zones":{"epaules":19,"triceps":15,"pecs":6,"abdos":6},"detail":[{"name":"Développé militaire debout","target":"4 × 6-8 (sem. 1-2 : 8-10)","sets":[{"w":"30","r":"8"},{"w":"35","r":"8"},{"w":"40","r":"8"},{"w":"40","r":"8"}]},{"name":"Développé couché haltères incliné","target":"3 × 8-10","sets":[{"w":"22","r":"10"},{"w":"22","r":"10"},{"w":"22","r":"10"}]},{"name":"Superset : élévations frontales + latérales (assis au banc)","target":"4 × 12-15 / 4 × 12-15","sets":[{"w":"8","r":"12"},{"w":"6","r":"12"},{"w":"6","r":"12"},{"w":"6","r":"12"}]},{"name":"Extension triceps corde","target":"3 × 10-12","sets":[{"w":"36","r":"12"},{"w":"36","r":"12"},{"w":"36","r":"12"},{"w":"36","r":"12"}]},{"name":"Relevé de jambes suspendu","target":"3 × 12-15","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]}]},{"id":"ohits6q","date":"2026-07-15","weekId":"2026-S29","name":"Bureau 1 — Pull + bras","variant":null,"durationMin":51,"sets":14,"volume":918,"xp":140,"full":false,"zones":{"dos":14,"biceps":11,"triceps":8,"epaules":6},"detail":[{"name":"Tractions : 5 × max−1 (myo-reps si \u003e12)","target":"40-50 reps totales","sets":[{"w":"1","r":"10"},{"w":"1","r":"10"},{"w":"1","r":"10"}]},{"name":"Rowing élastique, pause 1\" en contraction","target":"4 × 15-20","sets":[{"w":"1","r":"12"},{"w":"1","r":"12"},{"w":"1","r":"12"},{"w":"1","r":"12"}]},{"name":"Superset : curl élastique + extension triceps élastique","target":"4 × 15-20 chaque","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]},{"name":"Tirage face élastique (arrière épaule)","target":"3 × 20","sets":[{"w":"10","r":"12"},{"w":"10","r":"12"},{"w":"10","r":"12"}]}]}],"active":null,"soundOn":true,"lastLevel":5,"progStart":"2026-07-06","progVersion":2};
@@ -969,7 +963,7 @@ function progBlock(w){
   if(w<=5)  return {n:'Accumulation', rir:'RIR 1-2 poly · RIR 0-1 iso', deload:false, tip:'Construis le volume : double progression, +reps chaque semaine.'};
   if(w===6) return {n:'Deload', rir:'RIR +2 · charge -10% · -1 série/exo', deload:true, tip:"Semaine de récup : pas d'échec, volume réduit. Arrive frais en sem. 7."};
   if(w<=9)  return {n:'Intensification', rir:'RIR 1 · fourchettes basses', deload:false, tip:'Charges lourdes, reps basses, repos réduits, myo-reps.'};
-  if(w<=11) return {n:'Pic / PR', rir:'RIR 0-1 · charges max', deload:false, tip:'Teste tes maxis (test PR). Densité max au bureau.'};
+  if(w<=11) return {n:'Pic / PR', rir:'RIR 0-1 · charges max', deload:false, tip:'Teste tes maxis : 5RM squat et militaire, rowing lourd, traction lest max.'};
   return {n:'Deload + bilan', rir:'léger', deload:true, tip:'Récup + photos/mensurations. Clôture du cycle.'};
 }
 function progInfo(){
@@ -1265,7 +1259,7 @@ function sessCard(s){
 function renderSessions(){
   const pI=progInfo(), pk=phaseKey(pI.week);
   document.getElementById('var-note').innerHTML=
-    `<b>Semaine libre — 4 raids, ordre au choix.</b> Deux garde-fous : 48 h minimum entre les deux séances jambes (Salle 1 / Bureau 3) · jamais Bureau 1 la veille de Salle 3. Les exercices marqués A ou B se choisissent au lancement du raid.`
+    `<b>Haut / Bas ×2 — 4 raids par semaine.</b> Alterne Haut et Bas (type : Lun Haut A · Mar Bas A · Jeu Haut B · Ven Bas B). Garde-fou : 48 h minimum entre Bas A (squat lourd) et Bas B (RDL lourd).`
     +(pk?`<br><b style="color:${pI.deload?'var(--warn)':'var(--acc)'}">Bloc en cours — sem. ${pI.week}/12 · ${esc(pI.n)}</b> : ${esc(pI.tip)} Les cibles 📅 ci-dessous remplacent les cibles génériques pour cette semaine.`:'');
   const grp=(loc,title)=>{
     const list=S.sessions.filter(x=>x.loc===loc);
@@ -1305,8 +1299,8 @@ function openSessionModal(id){
     <div class="grid" style="gap:12px">
       <label class="fld">Nom<input id="se-name" value="${s?esc(s.name):''}" placeholder="Ex: Salle 4 — Bras"></label>
       <label class="fld">Lieu<select id="se-loc">
-        <option value="salle" ${s&&s.loc==='salle'?'selected':''}>Salle de sport</option>
-        <option value="bureau" ${!s||s.loc==='bureau'?'selected':''}>Bureau / maison</option>
+        <option value="salle" ${!s||s.loc!=='bureau'?'selected':''}>Salle de sport</option>
+        <option value="bureau" ${s&&s.loc==='bureau'?'selected':''}>Maison / extérieur</option>
       </select></label>
       <label class="fld">Couleur<input id="se-color" type="color" value="${s&&s.color?s.color:'#8FA7FF'}" style="height:38px;padding:3px"></label>
       <label class="fld">Note coach<textarea id="se-note" rows="2">${s?esc(s.note||''):''}</textarea></label>
@@ -1413,17 +1407,14 @@ function startSession(id){
 }
 /* ====== ÉCHAUFFEMENT — checklist avant le premier exo (pas d'XP) ====== */
 const WARMUPS={
-  salle1:{dur:'6-8 min',items:['Cardio léger 3 min (vélo, rameur ou marche rapide inclinée)','Mobilité hanches + chevilles : fentes dynamiques ×8/jambe, squats au poids du corps ×10','Montée en charge squat : ~50 % × 8 · ~70 % × 5 · ~85 % × 2-3 (repos courts, pas comptées comme séries de travail)']},
-  salle2:{dur:'6-8 min',items:['Cardio léger 2-3 min','Élastiques épaules : rotations externes ×15/bras + face pull léger ×15','Montée en charge militaire : barre à vide × 10 · ~50 % × 8 · ~75 % × 3-4']},
-  salle3:{dur:'5-7 min',items:['Cardio léger 2-3 min','Activation scapulaire : scapula pulls ×10 + rowing très léger ×15','Montée en charge rowing : ~50 % × 10 · ~75 % × 5']},
-  bureau1:{dur:'4-5 min',items:['Mobilité épaules/poignets 1-2 min (cercles de bras, extensions poignets)','Tirage élastique très léger ×15-20','2-3 tractions faciles ou suspensions actives ×10 s avant la première série de travail']},
-  bureau2:{dur:'4-5 min',items:['Rotations externes élastique ×15/bras','Pompes lentes au poids du corps ×10','1 série de dips sans lest ×6-8 avant de charger le sac']},
-  bureau3:{dur:'4-5 min',items:['Fentes dynamiques ×8-10/jambe + cercles de chevilles','Good morning au poids du corps ×15','1 série de split squat bulgare sans charge ×8/jambe avant les haltères']},
+  hautA:{dur:'6-8 min',items:['Cardio léger 3 min (rameur ou vélo)','Épaules : rotations externes élastique ×15/bras + face pull léger ×15 + dislocations bâton ×10','Montée en charge militaire : barre à vide ×10 · ~50 % ×8 · ~75 % ×4 · ~88 % ×2 (repos courts, pas comptées comme séries de travail)']},
+  basA:{dur:'7-9 min',items:['Cardio léger 3 min (vélo ou marche inclinée)','Mobilité hanches + chevilles : fentes dynamiques ×8/jambe, squats au poids du corps ×10, dorsiflexion cheville ×10/côté','Montée en charge squat : barre à vide ×10 · ~50 % ×8 · ~70 % ×5 · ~85 % ×3 · ~92 % ×1']},
+  hautB:{dur:'6-8 min',items:['Cardio léger 2-3 min','Activation scapulaire : scapula pulls ×10 + suspension active 2 × 15 s','Montée en charge tractions : 1 série au poids du corps ×5 · 1 série à ~50 % du lest ×3 avant la première série lestée']},
+  basB:{dur:'6-8 min',items:['Cardio léger 3 min','Mobilité hanches : good morning au poids du corps ×15, hip hinge au bâton ×10 (contact nuque-dos-sacrum)','Montée en charge RDL : barre à vide ×10 · ~50 % ×8 · ~75 % ×5']},
   _salle:{dur:'6-8 min',items:['Cardio léger 3 min','Mobilité ciblée sur les articulations de la séance','2-3 séries d\'approche progressives (~50 % → ~85 %) sur le premier exercice lourd']},
-  _bureau:{dur:'4-5 min',items:['Mobilité ciblée 1-2 min','1-2 séries très légères du premier exercice, tempo contrôlé']},
 };
 function buildWarmup(sess){
-  const w=WARMUPS[sess.key]||WARMUPS[sess.loc==='salle'?'_salle':'_bureau'];
+  const w=WARMUPS[sess.key]||WARMUPS._salle;   // repli générique pour toute séance personnalisée
   return {dur:w.dur,items:w.items.map(t=>({t,done:false}))};
 }
 /* ====== CIBLES PAR BLOC (plan 12 semaines) — appliquées au lancement du raid ====== */
@@ -1466,44 +1457,34 @@ function progHint(e,loc){
 }
 function phaseKey(w){ if(w<1||w>12)return null; if(w===1)return 'w1'; if(w<=5)return 'acc'; if(w===6)return 'deload'; if(w<=9)return 'int'; if(w<=11)return 'pic'; return 'deload'; }
 const PROG_TARGETS={
- salle1:[
-  {m:['squat barre'],t:{w1:'4×8 RIR 2-3',acc:'4×6-8 RIR 1-2 · +2,5 kg si 4×8 propre',int:'4×5-6 RIR 1',pic:'4×4-5 · test 5RM'}},
-  {m:['fentes'],t:{w1:'3×10/j RIR 2',acc:'3×10/j RIR 1 · +charge',int:'3×8/j +charge',pic:'3×8/j lourd'}},
-  {m:['leg curl assis','mollets debout'],t:{w1:'3×12 / 3×15',acc:'3×10-12 / 3×12-15 RIR 0-1',int:'idem · repos −15"',pic:'idem'}},
-  {m:['roumain'],t:{w1:'3×10 RIR 3',acc:'3×8-10 RIR 1-2 · +charge',int:'3×6-8 lourd',pic:'3×6 lourd'}},
-  {m:['crunch','roulette'],t:{w1:'2×15',acc:'2×12-15 RIR 1',int:'2×12 +résistance',pic:'2×12'}},
+ hautA:[
+  {m:['militaire'],t:{w1:'4×8 RIR 2-3',acc:'4×5-8 RIR 1-2 · +2,5 kg si 4×8 propre',int:'4×4-6 RIR 1',pic:'4×3-5 · test 5RM'}},
+  {m:['couché haltères incliné','incliné'],t:{w1:'3×10 RIR 2',acc:'3×6-10 RIR 1-2 · +charge',int:'3×5-8 lourd',pic:'3×5-6'}},
+  {m:['rowing barre'],t:{w1:'4×10 RIR 2',acc:'4×6-10 RIR 1-2 · +2,5 kg',int:'4×5-8 lourd',pic:'4×5-6 · test'}},
+  {m:['élévations latérales','face pull'],t:{w1:'3×15 / 3×20',acc:'3×12-20 RIR 0-1',int:'idem · repos −15"',pic:'drop-set dernière série'}},
+  {m:['triceps corde'],t:{w1:'3×15',acc:'3×10-15 RIR 0-1',int:'+ myo-reps',pic:'idem'}},
+  {m:['relevé de jambes'],t:{w1:'3×12',acc:'3×10-15 RIR 0-1',int:'+ lest cheville',pic:'idem'}},
  ],
- salle2:[
-  {m:['militaire'],t:{w1:'4×8 RIR 2',acc:'4×6-8 RIR 1-2 · +2,5 kg',int:'4×5-6 RIR 1',pic:'4×4-5 · test'}},
-  {m:['couché haltères','incliné'],t:{w1:'3×10 RIR 2',acc:'3×8-10 RIR 1 · +charge',int:'3×6-8 lourd',pic:'3×6'}},
-  {m:['écartés'],t:{w1:'4×15 / 3×12',acc:'4×12-15 / 3×12 RIR 0',int:'idem · repos −15"',pic:'idem'}},
-  {m:['élévations latérales'],t:{w1:'4×15',acc:'4×12-15 RIR 0',int:'drop-set dernière série',pic:'idem'}},
-  {m:['rowing barre'],t:{w1:'3×10',acc:'3×8-10 RIR 1-2 · +charge',int:'3×6-8 lourd',pic:'3×6'}},
-  {m:['triceps corde'],t:{w1:'3×12',acc:'3×10-12 RIR 0-1',int:'+ myo-reps',pic:'idem'}},
+ basA:[
+  {m:['squat barre'],t:{w1:'4×8 RIR 2-3',acc:'4×5-8 RIR 1-2 · +2,5 kg si 4×8 propre',int:'4×4-6 RIR 1',pic:'4×3-5 · test 5RM'}},
+  {m:['presse'],t:{w1:'3×12 RIR 2',acc:'3×10-12 RIR 1 · +charge',int:'3×8-10 lourd',pic:'3×8 lourd'}},
+  {m:['leg curl assis'],t:{w1:'3×15',acc:'3×10-15 RIR 0-1 · +charge',int:'idem · repos −15"',pic:'idem'}},
+  {m:['mollets debout'],t:{w1:'4×15',acc:'4×10-15 RIR 0-1 · +charge',int:'pause 2" en bas',pic:'idem'}},
+  {m:['crunch'],t:{w1:'3×15',acc:'3×12-15 RIR 1',int:'3×12 +résistance',pic:'idem'}},
  ],
- salle3:[
-  {m:['rowing barre','t-bar'],t:{w1:'4×10 RIR 2',acc:'4×8-10 RIR 1-2 · +2,5 kg',int:'4×6-8 lourd',pic:'4×6 · test'}},
+ hautB:[
+  {m:['tractions'],t:{w1:'4×8 poids du corps',acc:'4×6-10 lestées · +2,5 kg si 4×10',int:'4×5-8 lest lourd',pic:'4×4-6 · test lest max'}},
+  {m:['couché haltères'],t:{w1:'4×12 RIR 2',acc:'4×8-12 RIR 1 · +charge',int:'4×6-10 lourd',pic:'4×6-8'}},
   {m:['tirage vertical'],t:{w1:'3×12',acc:'3×10-12 RIR 1 · +charge',int:'3×8-10 lourd',pic:'3×8'}},
-  {m:['face pull','curl incliné'],t:{w1:'3×15 / 3×10',acc:'idem RIR 0-1',int:'repos −15"',pic:'idem'}},
-  {m:['marteau'],t:{w1:'2×12',acc:'2×12 RIR 0 · +charge',int:'+ myo-reps',pic:'idem'}},
+  {m:['élévations latérales','oiseau'],t:{w1:'3×15 / 3×20',acc:'3×12-20 RIR 0',int:'idem · repos −15"',pic:'drop-set dernière série'}},
+  {m:['curl incliné','curl marteau'],t:{w1:'3×12',acc:'3×10-12 RIR 0-1 · +charge',int:'+ myo-reps',pic:'idem'}},
  ],
- bureau1:[
-  {m:['tractions'],t:{w1:'40 reps totales',acc:'+2-3 reps tot./sem · myo-reps si >12',int:'tempo 2-1-2',pic:'lestées 5-10 kg si >50 reps'}},
-  {m:['rowing élastique'],t:{w1:'4×15',acc:'4×15-20 échec',int:'repos −15"',pic:'élastique + dur'}},
-  {m:['curl élastique','extension triceps élastique'],t:{w1:'4×15',acc:'4×15-20 échec',int:'+ myo-reps',pic:'élastique + dur'}},
-  {m:['tirage face'],t:{w1:'3×18',acc:'3×20 échec',int:'repos −10"',pic:'élastique + dur'}},
- ],
- bureau2:[
-  {m:['dips'],t:{w1:'4×8 à 10 kg',acc:'4×8-12 · +2,5 kg si 4×12',int:'4×8-10 + tempo 3-0-1',pic:'sac 20 kg'}},
-  {m:['pompes déficit'],t:{w1:'4×12 à 10 kg',acc:'4×12-15 échec · +charge',int:'déficit + grand',pic:'sac 20 kg'}},
-  {m:['développé élastique'],t:{w1:'4×15',acc:'4×15-20 échec',int:'+ myo-reps',pic:'élastique + dur'}},
-  {m:['diamant'],t:{w1:'2×max',acc:'2×max',int:'2×max + déficit',pic:'2×max'}},
- ],
- bureau3:[
-  {m:['bulgare'],t:{w1:'4×10/j',acc:'4×10-12/j RIR 0-1',int:'pause 1" en bas',pic:'+ tempo 4-1-1'}},
-  {m:['roumain unilatéral'],t:{w1:'3×12/j',acc:'3×12/j contrôle',int:'tempo 3-0-1',pic:'pause étirée'}},
-  {m:['leg curl élastique','nordic'],t:{w1:'3×8',acc:'3×8-10 échec excentrique',int:'nordic amplitude +',pic:'idem'}},
-  {m:['mollets unilatéral','sissy'],t:{w1:'3×15 / 2×12',acc:'3×15-20 / 2×12',int:'repos −15"',pic:'idem'}},
+ basB:[
+  {m:['roumain'],t:{w1:'4×10 RIR 2-3',acc:'4×6-10 RIR 1-2 · +2,5 kg',int:'4×5-8 lourd',pic:'4×5-6 · test'}},
+  {m:['gobelet','hack'],t:{w1:'3×12 RIR 2',acc:'3×10-12 RIR 1 · +charge',int:'3×8-10 lourd',pic:'3×8'}},
+  {m:['leg curl allongé'],t:{w1:'3×15',acc:'3×10-15 RIR 0-1 · +charge',int:'idem · repos −15"',pic:'idem'}},
+  {m:['mollets assis'],t:{w1:'4×20',acc:'4×12-20 RIR 0-1 · +charge',int:'pause 2" en bas',pic:'idem'}},
+  {m:['roulette'],t:{w1:'3×10',acc:'3×8-12 contrôle',int:'amplitude +',pic:'debout si possible'}},
  ],
 };
 function launchRaid(sess,variant){
@@ -1800,7 +1781,7 @@ const RANK_INFO=[
 ];
 function etaFor(xpMin){
   if(xpMin<=0)return 'départ';
-  const w=xpMin/760;
+  const w=xpMin/950;   // ~950 XP/semaine avec les 4 séances salle (17-20 séries/séance)
   if(w<9)return 'sem. '+Math.max(1,Math.round(w));
   return 'mois '+Math.round(w/4.33);
 }
@@ -2272,7 +2253,8 @@ syncSnd();
 if(S.lastLevel===undefined||S.lastLevel===null)S.lastLevel=levelFromXP(totalXP()).level;
 render();
 forceTop();
-if(S.active)toast('Raid en cours — retrouve-le dans l\'onglet Donjon.');
+if(_programUpdated)toast('Nouveau programme installé : 4 séances en salle (Haut/Bas ×2). XP, records et historique conservés.');
+else if(S.active)toast('Raid en cours — retrouve-le dans l\'onglet Donjon.');
 
 </script>
 </body>
