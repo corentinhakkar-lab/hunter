@@ -1701,6 +1701,7 @@ function showRecap(h){
 let restIv=null,restEnd=0;
 function startRest(sec){
   /* basé sur l'horloge réelle : reste juste même si le téléphone se verrouille ou que l'onglet est throttlé */
+  dismissRestAlarm();   // une alarme encore active (série enchaînée) ne doit pas survivre au repos suivant
   restEnd=Date.now()+sec*1000;
   unlockAudio();   // appelé depuis le ✓ = geste utilisateur : autorise le son avant que l'alarme en ait besoin
   const box=document.getElementById('rest');box.classList.add('show');
@@ -1718,12 +1719,14 @@ function updRest(){
 }
 function stopRest(){
   if(restIv){clearInterval(restIv);restIv=null;}
+  stopAlarmSound();   // fin de repos / raid abandonné ou terminé : plus rien ne doit sonner
   document.getElementById('rest').classList.remove('show');
 }
 document.getElementById('rest-stop').onclick=stopRest;
 
 /* ====== ALARME FIN DE REPOS — pop-up bloquante + bips répétés ====== */
-let restAlarmIv=null,restAlarmN=0;
+let restAlarmIv=null,restAlarmN=0,restAlarmTo=null;
+const ALARM_MAX_MS=20000;   // durée maxi de sonnerie : au-delà elle se coupe seule, le pop-up reste affiché
 function showRestAlarm(){
   let ov=document.getElementById('restover');
   if(!ov){
@@ -1736,6 +1739,7 @@ function showRestAlarm(){
     </div>`;
     document.body.appendChild(ov);
     document.getElementById('restover-btn').onclick=dismissRestAlarm;
+    ov.addEventListener('click',dismissRestAlarm);   // un appui n'importe où sur le voile coupe la sonnerie
   }
   ov.classList.add('show');
   vibrateAlarm();
@@ -1744,6 +1748,7 @@ function showRestAlarm(){
   let started=false;
   if(alarmEl&&alarmEl.src){
     try{
+      setAudioSession('transient');   // à re-poser ici : ne pas voler la session à la musique en cours
       alarmEl.muted=false;alarmEl.currentTime=0;
       const p=alarmEl.play();
       started=true;
@@ -1751,6 +1756,9 @@ function showRestAlarm(){
     }catch(e){started=false;}
   }
   if(!started)beepFallback();
+  // filet de sécurité : quoi qu'il arrive la sonnerie s'arrête, même si le pop-up n'est jamais touché
+  if(restAlarmTo)clearTimeout(restAlarmTo);
+  restAlarmTo=setTimeout(stopAlarmSound,ALARM_MAX_MS);
 }
 function vibrateAlarm(){ if(navigator.vibrate){try{navigator.vibrate([300,150,300]);}catch(e){}} }
 /* Repli : bips Web Audio répétés (muets si l'iPhone est en silencieux — d'où l'élément <audio> ci-dessus) */
@@ -1762,12 +1770,18 @@ function beepFallback(){
     if(restAlarmN>=10){clearInterval(restAlarmIv);restAlarmIv=null;}
   },1600);
 }
-function dismissRestAlarm(){
+/* Coupe le son sans toucher au pop-up (utilisé aussi par le minuteur de sécurité) */
+function stopAlarmSound(){
   if(restAlarmIv){clearInterval(restAlarmIv);restAlarmIv=null;}
+  if(restAlarmTo){clearTimeout(restAlarmTo);restAlarmTo=null;}
+  restAlarmN=0;
   if(alarmEl){try{alarmEl.pause();alarmEl.currentTime=0;}catch(e){}}
   if(navigator.vibrate){try{navigator.vibrate(0);}catch(e){}}
-  const ov=document.getElementById('restover');if(ov)ov.classList.remove('show');
-  sfx('click');
+}
+function dismissRestAlarm(){
+  stopAlarmSound();
+  const ov=document.getElementById('restover');
+  if(ov&&ov.classList.contains('show')){ov.classList.remove('show');sfx('click');}
 }
 
 /* ====================== PROGRESSION ====================== */
@@ -2116,7 +2130,15 @@ try{ if(alarmEl)alarmEl.src=buildAlarmWav(); }catch(e){}
 /* iOS n'autorise le son qu'après un geste de l'utilisateur : on « amorce » l'élément
    au premier appui, et de nouveau au lancement d'un repos (déclenché par le ✓). */
 let _audioUnlocked=false;
+/* Sans catégorie explicite, iOS donne la session « playback » à un <audio> : il coupe
+   la musique de fond (Spotify/Apple Music) et ne la relance pas. « transient » = son court :
+   la musique continue, simplement atténuée le temps de l'alarme. */
+function setAudioSession(type){
+  try{ if(navigator.audioSession)navigator.audioSession.type=type; }catch(e){}
+}
+setAudioSession('transient');
 function unlockAudio(){
+  setAudioSession('transient');
   try{const c=ac();if(c&&c.state==='suspended')c.resume();}catch(e){}
   if(_audioUnlocked||!alarmEl||!alarmEl.src)return;
   try{
