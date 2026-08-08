@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SYSTÈME — Entraînement</title>
+<!-- v3.2 : onglet Activité (calendrier mensuel + stats + PR 30 j + série de semaines), dossiers de séances repliables (champ « folder »), entraînement libre, barre live collante (temps/volume/séries/XP + progression), minuteur de repos circulaire (+30 s / Passer / série suivante), colonne PREV cliquable par série — aucune donnée existante modifiée -->
 <!-- v3.0 : programme 100 % salle — Haut/Bas ×2, 4 séances de 60' (migration progVersion 3, archives conservées) — v2.4 : alarme <audio> + historique pesées — v2.2 : thème allégé — v2.1 : poids de corps, suggestion progression, icône iPhone/PWA -->
 <meta name="theme-color" content="#171310">
 <!-- Icône & mode application (raccourci iPhone / PWA) -->
@@ -374,6 +375,79 @@ html{scrollbar-color:#4A3A2C var(--bg)}
 .pchip-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .wchip{font-size:12px;color:var(--mut);border:1px solid var(--gline);border-radius:999px;padding:3px 11px}
 .wchip b{color:var(--txt)}
+
+/* ================= v3.2 — ACTIVITÉ / DOSSIERS / BARRE LIVE / REPOS ================= */
+/* --- Calendrier --- */
+.calhead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.calhead .m{font-family:var(--fhead);font-size:19px;font-weight:700;letter-spacing:.5px}
+.calhead .y{color:var(--dim);font-size:13px;font-weight:600;margin-left:2px}
+.calnav{width:38px;height:38px;border-radius:14px;background:var(--glass);border:1px solid var(--gline);color:var(--txt);cursor:pointer;font-size:16px}
+.calnav:hover{background:var(--glass2)}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.caldow{text-align:center;font-size:10px;letter-spacing:2px;color:var(--dim);font-weight:700;padding-bottom:4px}
+.calday{position:relative;aspect-ratio:1/1;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.03);
+  border:1px solid transparent;color:var(--txt);font-weight:600;font-size:15px;cursor:pointer;transition:.15s}
+.calday:hover{background:var(--glass2)}
+.calday.out{opacity:.25;cursor:default}
+.calday.has{background:linear-gradient(180deg,rgba(232,118,60,.22),rgba(232,118,60,.06));border-color:rgba(232,118,60,.45)}
+.calday.today{color:#fff;background:linear-gradient(180deg,#EF854B,#D25E2B);box-shadow:0 0 18px rgba(232,118,60,.5)}
+.calday.sel{border-color:var(--acc2);box-shadow:0 0 0 2px rgba(244,161,93,.35)}
+.caldots{position:absolute;bottom:5px;left:0;right:0;display:flex;justify-content:center;gap:3px}
+.caldot{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px rgba(232,118,60,.8)}
+.calday.today .caldot{background:#fff;box-shadow:none}
+.statcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:16px}
+.statcard{background:rgba(255,255,255,.04);border:1px solid var(--gline);border-radius:16px;padding:13px 14px}
+.statcard b{display:block;font-family:var(--fhead);font-size:24px;font-weight:700;line-height:1.1}
+.statcard span{font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;font-weight:700}
+.dayitem{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.04);border:1px solid var(--gline);
+  border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.dayitem .dn{font-weight:700;flex:1;min-width:150px}
+
+/* --- Dossiers de séances --- */
+.folder{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border:1px solid var(--gline);
+  border-radius:18px;padding:13px 16px;cursor:pointer;grid-column:1/-1;transition:.15s}
+.folder:hover{background:var(--glass2)}
+.folder .chev{transition:.2s;color:var(--mut);font-size:13px}
+.folder.open .chev{transform:rotate(90deg)}
+.folder .fico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:16px;background:rgba(232,118,60,.14);border:1px solid rgba(232,118,60,.3)}
+.folder .fname{font-weight:700;font-size:15px}
+.folder .fsub{font-size:11px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;font-weight:700}
+.freecard{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;cursor:pointer;
+  background:linear-gradient(180deg,rgba(232,118,60,.22),rgba(232,118,60,.08));border:1px solid rgba(232,118,60,.45);transition:.15s}
+.freecard:hover{filter:brightness(1.12)}
+.freecard .fico{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:rgba(0,0,0,.28);font-size:17px}
+
+/* --- Barre live du raid --- */
+#t-body .trainbar{position:sticky;top:var(--hh,64px);z-index:20;backdrop-filter:blur(10px)}
+.livestats{display:flex;gap:8px;width:100%;margin-top:10px}
+.livestats .ls{flex:1;text-align:center;background:rgba(0,0,0,.25);border:1px solid var(--gline);border-radius:14px;padding:8px 4px}
+.livestats .ls span{display:block;font-size:9px;letter-spacing:2px;color:var(--dim);font-weight:700}
+.livestats .ls b{font-family:var(--fhead);font-size:19px;font-weight:700;color:var(--txt)}
+.livestats .ls b i{font-size:11px;font-style:normal;color:var(--dim);margin-left:2px}
+.liveprog{height:5px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid var(--gline);overflow:hidden;margin-top:9px;width:100%}
+.liveprog>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .3s}
+.livedot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);margin-right:6px;animation:blink 1.6s infinite;vertical-align:middle}
+
+/* --- Série précédente (PREV) --- */
+.setrow .prev{font-size:11px;color:var(--dim);min-width:62px;text-align:center;border:1px dashed rgba(255,255,255,.14);
+  border-radius:10px;padding:4px 5px;cursor:pointer;background:transparent;font-family:var(--fbody)}
+.setrow .prev:hover{color:var(--txt);border-color:var(--acc);border-style:solid}
+.setrow .prev.empty{opacity:.4;cursor:default;border-style:dashed}
+@media (max-width:600px){.setrow .prev{min-width:52px;font-size:10px;padding:4px 3px}}
+
+/* --- Repos circulaire --- */
+#rest{align-items:center;gap:14px;border-radius:22px}
+.restring{position:relative;width:56px;height:56px;border-radius:50%;flex:0 0 auto;
+  background:conic-gradient(var(--acc) 0deg,rgba(255,255,255,.09) 0deg)}
+.restring::after{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--panel)}
+.restring span{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-size:11px;font-weight:700;color:var(--mut)}
+#rest .rnext{font-size:11px;color:var(--dim);max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.racts{display:flex;flex-direction:column;gap:6px}
+@media (max-width:600px){
+  #rest{left:12px;right:12px;bottom:12px;justify-content:space-between}
+  #rest .rnext{max-width:40vw}
+}
+
 </style>
 </head>
 <body>
@@ -385,6 +459,7 @@ html{scrollbar-color:#4A3A2C var(--bg)}
   </div>
   <nav id="nav">
     <button data-s="dashboard" class="active">Statut</button>
+    <button data-s="activity">Activité</button>
     <button data-s="sessions">Séances</button>
     <button data-s="train" id="nav-train">Donjon</button>
     <button data-s="progression">Progression</button>
@@ -450,6 +525,22 @@ html{scrollbar-color:#4A3A2C var(--bg)}
   </div>
 </section>
 
+<!-- ================= ACTIVITÉ (calendrier) ================= -->
+<section class="screen" id="screen-activity">
+  <div class="panel" style="margin-bottom:16px">
+    <div class="calhead">
+      <button class="calnav" id="cal-prev" title="Mois précédent">‹</button>
+      <div style="flex:1"><span class="m" id="cal-month"></span><span class="y" id="cal-year"></span></div>
+      <button class="btn ghost sm" id="cal-today">Aujourd'hui</button>
+      <button class="calnav" id="cal-next" title="Mois suivant">›</button>
+    </div>
+    <div class="calgrid" id="cal-dows"></div>
+    <div class="calgrid" id="cal-grid" style="margin-top:6px"></div>
+    <div class="statcards" id="cal-stats"></div>
+  </div>
+  <div class="panel"><h3 id="cal-daytitle">Journée</h3><div id="cal-day"></div></div>
+</section>
+
 <!-- ================= SÉANCES ================= -->
 <section class="screen" id="screen-sessions">
   <div class="panel" style="margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
@@ -474,16 +565,21 @@ html{scrollbar-color:#4A3A2C var(--bg)}
   <div id="t-body" style="display:none">
     <div class="panel trainbar" style="margin-bottom:16px">
       <div>
-        <div class="tit" id="t-name"></div>
+        <div class="tit"><span class="livedot"></span><span id="t-name"></span></div>
         <span class="dim" id="t-meta" style="font-size:12.5px"></span>
         <div id="t-prog" style="margin-top:7px;width:100%"></div>
       </div>
-      <div style="margin-left:auto;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
-        <div style="text-align:center"><div class="dim" style="font-size:10px;letter-spacing:2px">DURÉE</div><div class="timerchip" id="t-timer">00:00</div></div>
-        <div style="text-align:center"><div class="dim" style="font-size:10px;letter-spacing:2px">XP EN COURS</div><div class="timerchip" id="t-xp" style="color:var(--ok)">0</div></div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <button class="btn go" id="t-finish">Terminer</button>
         <button class="btn danger sm" id="t-abort">Abandonner</button>
       </div>
+      <div class="livestats">
+        <div class="ls"><span>TEMPS</span><b id="t-timer">0:00</b></div>
+        <div class="ls"><span>VOLUME</span><b id="t-vol">0<i>kg</i></b></div>
+        <div class="ls"><span>SÉRIES</span><b id="t-sets">0 / 0</b></div>
+        <div class="ls"><span>XP</span><b id="t-xp" style="color:var(--acc)">0</b></div>
+      </div>
+      <div class="liveprog"><i id="t-bar" style="width:0%"></i></div>
     </div>
     <div id="t-exos"></div>
     <button class="btn ghost" onclick="openExoModal(null,null,true)">+ Ajouter un exercice à ce raid</button>
@@ -771,8 +867,16 @@ html{scrollbar-color:#4A3A2C var(--bg)}
 
 <!-- rest timer / modal / toast / level-up -->
 <div id="rest">
-  <div><div class="rl">REPOS</div><div class="rt" id="rest-t">0:00</div></div>
-  <button class="btn ghost sm" id="rest-stop">✕</button>
+  <div class="restring" id="rest-ring"><span id="rest-pct">0%</span></div>
+  <div style="flex:1;min-width:0">
+    <div class="rl">REPOS <span id="rest-total" class="dim"></span></div>
+    <div class="rt" id="rest-t">0:00</div>
+    <div class="rnext" id="rest-next"></div>
+  </div>
+  <div class="racts">
+    <button class="btn go sm" id="rest-plus">+30 s</button>
+    <button class="btn ghost sm" id="rest-skip">Passer</button>
+  </div>
 </div>
 <!-- Alarme via un élément média : contrairement à Web Audio, il sonne même si l'iPhone est en mode silencieux -->
 <audio id="alarm-audio" loop playsinline preload="auto"></audio>
@@ -1043,7 +1147,7 @@ function syncProgUI(){
   if(info){ const p=progInfo(); info.textContent = p.week>12 ? ('Cycle terminé (sem. '+p.week+').') : ('Semaine '+p.week+' / 12 · bloc '+p.n+'.'); }
 }
 /* ====================== RENDER GLOBAL ====================== */
-function render(){renderDashboard();renderBody();renderSessions();renderTrain();renderProgression();renderHistory();renderPR();syncProgUI();save();checkLevelUp();}
+function render(){renderDashboard();renderBody();renderSessions();renderTrain();renderActivity();renderProgression();renderHistory();renderPR();syncProgUI();save();checkLevelUp();}
 function rewardFor(level){
   if(S.rewards&&S.rewards[level])return S.rewards[level];
   const l=LEVELS.find(x=>x.level===level);return l?l.reward:'';
@@ -1307,13 +1411,28 @@ function renderSessions(){
   document.getElementById('var-note').innerHTML=
     `<b>Haut / Bas ×2 — 4 raids par semaine.</b> Alterne Haut et Bas (type : Lun Haut A · Mar Bas A · Jeu Haut B · Ven Bas B). Garde-fou : 48 h minimum entre Bas A (squat lourd) et Bas B (RDL lourd).`
     +(pk?`<br><b style="color:${pI.deload?'var(--warn)':'var(--acc)'}">Bloc en cours — sem. ${pI.week}/12 · ${esc(pI.n)}</b> : ${esc(pI.tip)} Les cibles 📅 ci-dessous remplacent les cibles génériques pour cette semaine.`:'');
-  const grp=(loc,title)=>{
-    const list=S.sessions.filter(x=>x.loc===loc);
+  S.folds=S.folds||{};
+  _foldKeys=allFolders();
+  const grp=(f,i)=>{
+    const list=S.sessions.filter(x=>folderOf(x)===f);
     if(!list.length)return '';
-    return `<div style="grid-column:1/-1;font-family:var(--fhead);font-size:11px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-top:4px">${title}</div>`
-      + list.map(s=>sessCard(s)).join('');
+    const open=S.folds[f]!==true;               // true = dossier replié
+    const nExo=list.reduce((a,x)=>a+x.exos.length,0);
+    const locs=new Set(list.map(x=>x.loc));
+    const icon=locs.size===1?(locs.has('salle')?'🏋':'🏢'):'📁';
+    const head=`<div class="folder ${open?'open':''}" onclick="toggleFold(${i})">
+        <span class="chev">▶</span><span class="fico">${icon}</span>
+        <span style="flex:1"><span class="fname">${esc(f)}</span><br>
+        <span class="fsub">${list.length} séance${list.length>1?'s':''} · ${nExo} exercices</span></span>
+      </div>`;
+    return head + (open?list.map(x=>sessCard(x)).join(''):'');
   };
-  document.getElementById('s-list').innerHTML=grp('salle','🏋 Salle de sport')+grp('bureau','🏢 Bureau / élastiques');
+  const free=`<div class="freecard" onclick="startFree()">
+      <span class="fico">▶</span>
+      <span style="flex:1"><b>Entraînement libre</b><br>
+      <span style="font-size:12.5px;opacity:.85">Démarre sans plan — tu ajoutes les exercices au fil de la séance</span></span>
+    </div>`;
+  document.getElementById('s-list').innerHTML=free+_foldKeys.map((f,i)=>grp(f,i)).join('');
 }
 
 function dupSession(id){
@@ -1348,6 +1467,8 @@ function openSessionModal(id){
         <option value="salle" ${!s||s.loc!=='bureau'?'selected':''}>Salle de sport</option>
         <option value="bureau" ${s&&s.loc==='bureau'?'selected':''}>Maison / extérieur</option>
       </select></label>
+      <label class="fld">Dossier<input id="se-folder" list="folder-list" value="${s?esc(s.folder||''):''}" placeholder="${esc(defFolder({loc:s?s.loc:'salle'}))}">
+        <datalist id="folder-list">${allFolders().map(f=>`<option value="${esc(f)}"></option>`).join('')}</datalist></label>
       <label class="fld">Couleur<input id="se-color" type="color" value="${s&&s.color?s.color:'#8FA7FF'}" style="height:38px;padding:3px"></label>
       <label class="fld">Note coach<textarea id="se-note" rows="2">${s?esc(s.note||''):''}</textarea></label>
     </div>
@@ -1362,8 +1483,9 @@ function openSessionModal(id){
     const loc=document.getElementById('se-loc').value;
     const color=document.getElementById('se-color').value;
     const note=document.getElementById('se-note').value.trim();
-    if(s){s.name=name;s.loc=loc;s.color=color;s.note=note;}
-    else S.sessions.push({id:uid(),name,loc,color,note,exos:[]});
+    const folder=document.getElementById('se-folder').value.trim();
+    if(s){s.name=name;s.loc=loc;s.color=color;s.note=note;s.folder=folder;}
+    else S.sessions.push({id:uid(),name,loc,color,note,folder,exos:[]});
     closeModal();render();
   };
 }
@@ -1629,8 +1751,10 @@ function renderTrain(){
       </div>`).join('')}
     </div>`;
   }
+  syncLive();
   document.getElementById('t-exos').innerHTML=wuHTML+S.active.exos.map((e,ei)=>{
     const done=e.sets.length&&e.sets.every(st=>st.done);
+    const _lp=lastExoPerf(e.name);
     return `<div class="exo ${done?'done':''}">
       <div class="xhead">
         <span class="xname">${esc(e.name)}</span>
@@ -1645,6 +1769,7 @@ function renderTrain(){
       </div>
       ${e.sets.map((st,si)=>`<div class="setrow">
         <span class="sn">${si+1}</span>
+        ${prevChip(_lp,ei,si)}
         <input id="set-${ei}-${si}-w" type="number" inputmode="decimal" placeholder="${exBW(e)?'+lest':'kg'}" value="${st.w}" oninput="setVal(${ei},${si},'w',this.value)">
         <span class="x">×</span>
         <input id="set-${ei}-${si}-r" type="number" inputmode="numeric" placeholder="reps" value="${st.r}" oninput="setVal(${ei},${si},'r',this.value)">
@@ -1660,6 +1785,7 @@ function tickTimer(){
   const s=Math.floor((Date.now()-S.active.startedAt)/1000);
   const mm=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');
   const el=document.getElementById('t-timer');if(el)el.textContent=mm+':'+ss;
+  syncLive();
 }
 function liveXP(){
   if(!S.active)return 0;
@@ -1684,7 +1810,7 @@ function toggleSet(ei,si){
   if(!S.active)return;
   const st=S.active.exos[ei].sets[si];
   st.done=!st.done;
-  if(st.done){sfx('tick');startRest(parseRest(S.active.exos[ei].rest));}
+  if(st.done){sfx('tick');startRest(parseRest(S.active.exos[ei].rest),nextLabel(ei,si));}
   else sfx('untick');
   save();renderTrain();
 }
@@ -1750,13 +1876,18 @@ function showRecap(h){
 }
 
 /* ====== REST TIMER ====== */
-let restIv=null,restEnd=0;
-function startRest(sec){
+let restIv=null,restEnd=0,restTotal=0;
+function startRest(sec,ctx){
   /* basé sur l'horloge réelle : reste juste même si le téléphone se verrouille ou que l'onglet est throttlé */
   dismissRestAlarm();   // une alarme encore active (série enchaînée) ne doit pas survivre au repos suivant
   restEnd=Date.now()+sec*1000;
+  restTotal=Math.max(1,sec);
   unlockAudio();   // appelé depuis le ✓ = geste utilisateur : autorise le son avant que l'alarme en ait besoin
   const box=document.getElementById('rest');box.classList.add('show');
+  const tot=document.getElementById('rest-total');
+  if(tot)tot.textContent='· '+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
+  const nx=document.getElementById('rest-next');
+  if(nx)nx.textContent=ctx||'';
   updRest();
   if(restIv)clearInterval(restIv);
   restIv=setInterval(()=>{
@@ -1767,14 +1898,37 @@ function updRest(){
   const left=Math.max(0,Math.round((restEnd-Date.now())/1000));
   const el=document.getElementById('rest-t');
   if(el)el.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+  const ratio=restTotal>0?Math.max(0,Math.min(1,left/restTotal)):0;
+  const ring=document.getElementById('rest-ring');
+  if(ring){const deg=(ratio*360).toFixed(1);
+    ring.style.background='conic-gradient(var(--acc) '+deg+'deg, rgba(255,255,255,.09) '+deg+'deg)';}
+  const pc=document.getElementById('rest-pct');
+  if(pc)pc.textContent=Math.round(ratio*100)+'%';
   return left;
+}
+/* libellé « série suivante » affiché dans le minuteur */
+function nextLabel(ei,si){
+  if(!S.active)return '';
+  const e=S.active.exos[ei];
+  if(e){
+    const nx=e.sets.findIndex((st,i)=>i>si&&!st.done);
+    if(nx>=0)return 'Suivant · '+e.name+' · S'+(nx+1);
+  }
+  for(let j=ei+1;j<S.active.exos.length;j++){
+    const o=S.active.exos[j];
+    const nx=o.sets.findIndex(st=>!st.done);
+    if(nx>=0)return 'Suivant · '+o.name+' · S'+(nx+1);
+  }
+  return 'Dernière série validée — tu peux terminer le raid.';
 }
 function stopRest(){
   if(restIv){clearInterval(restIv);restIv=null;}
   stopAlarmSound();   // fin de repos / raid abandonné ou terminé : plus rien ne doit sonner
   document.getElementById('rest').classList.remove('show');
 }
-document.getElementById('rest-stop').onclick=stopRest;
+{const _rplus=document.getElementById('rest-plus'),_rskip=document.getElementById('rest-skip');
+ if(_rplus)_rplus.onclick=()=>{restEnd+=30000;restTotal+=30;updRest();sfx('tick');};
+ if(_rskip)_rskip.onclick=()=>{stopRest();};}
 
 /* ====== ALARME FIN DE REPOS — pop-up bloquante + bips répétés ====== */
 let restAlarmIv=null,restAlarmN=0,restAlarmTo=null;
@@ -2312,6 +2466,198 @@ document.getElementById('lvlup').addEventListener('click',e=>{if(e.target.id==='
   if(!reduce)requestAnimationFrame(frame);
 })();
 
+/* ====================== v3.2 — LIVE / PREV / LIBRE / ACTIVITÉ ====================== */
+
+/* --- volume et séries en direct pendant le raid (même calcul que finishSession) --- */
+function liveVolume(){
+  if(!S.active)return 0;
+  const body=currentBodyweight();let v=0;
+  S.active.exos.forEach(e=>{
+    const bw=exBW(e);
+    e.sets.filter(st=>st.done).forEach(st=>{
+      const load=parseFloat(st.w)||0,reps=parseFloat(st.r)||0;
+      v+=(bw?body+load:load)*reps;
+    });
+  });
+  return v;
+}
+function liveSets(){
+  let d=0,t=0;
+  if(S.active)S.active.exos.forEach(e=>{t+=e.sets.length;d+=e.sets.filter(st=>st.done).length;});
+  return {d,t};
+}
+function syncLive(){
+  if(!S.active)return;
+  const st=liveSets();
+  const v=document.getElementById('t-vol');   if(v)v.innerHTML=fmt(Math.round(liveVolume()))+'<i>kg</i>';
+  const c=document.getElementById('t-sets');  if(c)c.textContent=st.d+' / '+st.t;
+  const x=document.getElementById('t-xp');    if(x)x.textContent=fmt(liveXP());
+  const b=document.getElementById('t-bar');   if(b)b.style.width=(st.t?st.d/st.t*100:0).toFixed(1)+'%';
+}
+
+/* --- colonne PREV : dernière performance série par série, cliquable pour la reprendre --- */
+function prevChip(lp,ei,si){
+  const ps=lp&&lp.sets?lp.sets[si]:null;
+  if(!ps)return '<span class="prev empty" title="Aucune donnée précédente">—</span>';
+  const w=(ps.w===''||ps.w==null)?'—':ps.w, r=(ps.r===''||ps.r==null)?'—':ps.r;
+  return '<button class="prev" title="Reprendre '+esc(String(w))+' × '+esc(String(r))+'" onclick="usePrev('+ei+','+si+',\''+esc(String(ps.w==null?'':ps.w))+'\',\''+esc(String(ps.r==null?'':ps.r))+'\')">'+esc(String(w))+'×'+esc(String(r))+'</button>';
+}
+function usePrev(ei,si,w,r){
+  if(!S.active)return;
+  const e=S.active.exos[ei];if(!e)return;
+  const st=e.sets[si];if(!st)return;
+  st.w=w;st.r=r;st.tw=true;st.tr=true;
+  sfx('tick');save();renderTrain();
+}
+
+/* --- dossiers de séances : champ libre « folder », repli mémorisé --- */
+let _foldKeys=[];
+function defFolder(s){return (s&&s.loc==='bureau')?'Bureau / élastiques':'Salle de sport';}
+function folderOf(s){return (s&&s.folder&&s.folder.trim())?s.folder.trim():defFolder(s);}
+function allFolders(){
+  const out=[];
+  S.sessions.forEach(s=>{const f=folderOf(s);if(!out.includes(f))out.push(f);});
+  return out;
+}
+function toggleFold(i){
+  const k=_foldKeys[i];if(k==null)return;
+  S.folds=S.folds||{};S.folds[k]=!S.folds[k];sfx('click');save();renderSessions();
+}
+
+/* --- entraînement libre : raid sans plan --- */
+function startFree(){
+  if(S.active){toast('Un raid est déjà en cours — termine-le ou abandonne-le d\'abord.');showScreen('train');return;}
+  S.active={name:'Entraînement libre',color:'#E8763C',loc:'salle',variant:null,startedAt:Date.now(),
+    warmup:null,progWeek:null,progBlockName:null,deload:false,dropped:[],exos:[],free:true};
+  sfx('quest');save();showScreen('train');render();
+  toast('⚔ Entraînement libre lancé — ajoute ton premier exercice en bas de l\'écran.');
+}
+
+/* ====================== ACTIVITÉ — CALENDRIER ====================== */
+const CAL_MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+let _calRef=null,_calSel=null;
+function dstr(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+function daysAgo(ds){const t=Date.parse(String(ds)+'T12:00:00');return isFinite(t)?(Date.now()-t)/86400000:9999;}
+/* records : un PR = une meilleure série estimée (e1RM) supérieure à toutes les précédentes du même exercice.
+   La toute première mesure d'un exercice sert de référence et n'est pas comptée comme PR. */
+function prEvents(){
+  const list=[...S.archive].sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const best={},out=[];
+  list.forEach(h=>{
+    const body=h.bodyKg||bodyAt(h.date);
+    (h.detail||[]).forEach(d=>{
+      const b=bestSetOf(d,body);if(!b)return;
+      const k=exoKey(d.name);
+      if(best[k]==null){best[k]=b.e;return;}
+      if(b.e>best[k]+.01){best[k]=b.e;out.push({date:h.date,name:d.name,e:b.e,txt:fmtBest(b)});}
+    });
+  });
+  return out;
+}
+/* série : nombre de semaines ISO consécutives avec au moins un raid */
+function streakWeeks(){
+  const set=new Set(S.archive.map(h=>h.weekId));
+  const d=new Date();let n=0;
+  if(!set.has(isoWeekId(d)))d.setDate(d.getDate()-7);
+  while(set.has(isoWeekId(d))){n++;d.setDate(d.getDate()-7);}
+  return n;
+}
+function calShift(n){
+  if(!_calRef)return;
+  const d=new Date(_calRef.y,_calRef.m+n,1);
+  _calRef={y:d.getFullYear(),m:d.getMonth()};
+  sfx('click');renderActivity();
+}
+function calToday(){
+  const n=new Date();_calRef={y:n.getFullYear(),m:n.getMonth()};
+  _calSel=dstr(n.getFullYear(),n.getMonth(),n.getDate());
+  sfx('click');renderActivity();
+}
+function calPick(ds){_calSel=(_calSel===ds?null:ds);sfx('click');renderActivity();}
+function renderActivity(){
+  const grid=document.getElementById('cal-grid');if(!grid)return;
+  const now=new Date();
+  if(!_calRef)_calRef={y:now.getFullYear(),m:now.getMonth()};
+  document.getElementById('cal-month').textContent=CAL_MONTHS[_calRef.m];
+  document.getElementById('cal-year').textContent=' '+_calRef.y;
+  document.getElementById('cal-dows').innerHTML=['L','M','M','J','V','S','D'].map(d=>'<div class="caldow">'+d+'</div>').join('');
+
+  const byDate={};S.archive.forEach(h=>{(byDate[h.date]=byDate[h.date]||[]).push(h);});
+  const first=new Date(_calRef.y,_calRef.m,1);
+  const off=(first.getDay()+6)%7;
+  const nd=new Date(_calRef.y,_calRef.m+1,0).getDate();
+  const ndPrev=new Date(_calRef.y,_calRef.m,0).getDate();
+  const today=dstr(now.getFullYear(),now.getMonth(),now.getDate());
+  let html='';
+  for(let i=0;i<off;i++)html+='<div class="calday out">'+(ndPrev-off+1+i)+'</div>';
+  for(let d=1;d<=nd;d++){
+    const ds=dstr(_calRef.y,_calRef.m,d),list=byDate[ds]||[];
+    const cls=['calday'];
+    if(list.length)cls.push('has');
+    if(ds===today)cls.push('today');
+    if(ds===_calSel)cls.push('sel');
+    const dots=list.slice(0,3).map(h=>{
+      const ss=S.sessions.find(x=>x.name===h.name);
+      return '<i class="caldot"'+(ss&&ss.color?' style="background:'+ss.color+'"':'')+'></i>';
+    }).join('');
+    html+='<div class="'+cls.join(' ')+'" onclick="calPick(\''+ds+'\')">'+d+(dots?'<span class="caldots">'+dots+'</span>':'')+'</div>';
+  }
+  const tail=(7-((off+nd)%7))%7;
+  for(let i=1;i<=tail;i++)html+='<div class="calday out">'+i+'</div>';
+  grid.innerHTML=html;
+
+  const wid=isoWeekId(now);
+  const wkN=S.archive.filter(h=>h.weekId===wid).length;
+  const mpref=dstr(_calRef.y,_calRef.m,1).slice(0,7);
+  const mo=S.archive.filter(h=>String(h.date).slice(0,7)===mpref);
+  const movol=mo.reduce((a,h)=>a+(h.volume||0),0);
+  const prs=prEvents().filter(x=>daysAgo(x.date)<=30).length;
+  document.getElementById('cal-stats').innerHTML=
+    '<div class="statcard"><b>'+wkN+' / '+WEEK_TARGET+'</b><span>Cette semaine</span></div>'+
+    '<div class="statcard"><b>'+mo.length+'</b><span>Raids du mois</span></div>'+
+    '<div class="statcard"><b style="color:var(--acc)">'+prs+'</b><span>PR · 30 jours</span></div>'+
+    '<div class="statcard"><b>'+streakWeeks()+'</b><span>Semaines d\'affilée</span></div>'+
+    '<div class="statcard"><b>'+fmt(Math.round(movol))+'<i style="font-size:12px;font-style:normal;color:var(--dim)"> kg</i></b><span>Volume du mois</span></div>';
+  renderCalDay();
+}
+function renderCalDay(){
+  const box=document.getElementById('cal-day'),tit=document.getElementById('cal-daytitle');
+  if(!box)return;
+  if(!_calSel){
+    tit.textContent='Journée';
+    box.innerHTML='<span class="dim">Touche un jour du calendrier pour voir le détail des raids et des records.</span>';
+    return;
+  }
+  const p=_calSel.split('-');
+  tit.textContent='Journée du '+p[2]+' '+CAL_MONTHS[parseInt(p[1],10)-1].toLowerCase()+' '+p[0];
+  const list=S.archive.filter(h=>h.date===_calSel);
+  const prs=prEvents().filter(x=>x.date===_calSel);
+  let html='';
+  if(!list.length)html+='<span class="dim">Aucun raid ce jour-là.</span>';
+  html+=list.map(h=>'<div class="dayitem">'+
+      '<span class="dn">'+esc(h.name)+(h.variant?' <span class="tag '+(h.variant==='B'?'vb':'va')+'">Var. '+esc(h.variant)+'</span>':'')+'</span>'+
+      '<span class="pill">'+h.sets+' séries</span>'+
+      '<span class="pill">'+fmt(Math.round(h.volume))+' kg</span>'+
+      '<span class="pill">'+h.durationMin+' min</span>'+
+      '<span class="pill" style="color:var(--acc)">+'+fmt(h.xp)+' XP</span>'+
+      '<button class="btn ghost sm" onclick="showDetail(\''+h.id+'\')">Détail</button>'+
+    '</div>').join('');
+  if(prs.length)html+='<div style="margin-top:12px"><div class="dim" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Records battus ce jour</div>'+
+    prs.map(x=>'<span class="pill" style="color:var(--acc);border-color:rgba(232,118,60,.5)">★ '+esc(x.name)+' — '+esc(x.txt)+'</span>').join('')+'</div>';
+  box.innerHTML=html;
+}
+/* hauteur du header → barre live collante sous le menu */
+function syncHeadH(){
+  const h=document.querySelector('header');
+  if(h)document.documentElement.style.setProperty('--hh',h.offsetHeight+'px');
+}
+window.addEventListener('resize',syncHeadH);
+syncHeadH();
+{const a=document.getElementById('cal-prev'),b=document.getElementById('cal-next'),c=document.getElementById('cal-today');
+ if(a)a.onclick=()=>calShift(-1);
+ if(b)b.onclick=()=>calShift(1);
+ if(c)c.onclick=calToday;}
+
 /* ====================== INIT ====================== */
 /* Toujours rouvrir en haut de l'onglet Statut (empêche la restauration
    de la position de scroll par le lecteur / WebView, ex. Documents Readdle) */
@@ -2330,6 +2676,7 @@ render();
 forceTop();
 if(_programUpdated)toast('Programme mis à jour : haltérophilie en ouverture de Haut A et Bas A, squat et militaire conservés. XP, records et historique conservés.');
 else if(S.active)toast('Raid en cours — retrouve-le dans l\'onglet Donjon.');
+
 
 </script>
 </body>
